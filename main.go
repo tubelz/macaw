@@ -19,15 +19,12 @@ const (
 
 // We only have one input manager for now and one window, so they are going to be globals
 var (
-	// Input is responsible for gathering the events and manage them
-	Input = &input.Manager{}
 	// Window is the window of our game
 	Window *sdl.Window
 )
 
-
 // Initialize SDL
-func Initialize(image bool, font bool) error {
+func Initialize(image, font, sound bool) error {
 	var window *sdl.Window
 	var err error
 	// flags available:
@@ -61,8 +58,10 @@ func Initialize(image bool, font bool) error {
 	}
 
 	// load sound support
-	if err := sdl.Init(sdl.INIT_AUDIO); err != nil {
-		log.Println(err)
+	if sound {
+		if err := sdl.Init(sdl.INIT_AUDIO); err != nil {
+			log.Fatalf("Failed to initialize MIX: %s\n", err)
+		}
 	}
 
 	// we are only creating one window for now, so Window will be a global
