@@ -1,11 +1,10 @@
 package macaw
 
 import (
-	"log"
-	"github.com/tubelz/macaw/input"
-	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/img"
+	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
+	"log"
 )
 
 const (
@@ -39,12 +38,12 @@ func Initialize(image, font, sound bool) error {
 	// INIT_EVERYTHING = INIT_TIMER | INIT_AUDIO | INIT_VIDEO | INIT_EVENTS | INIT_JOYSTICK | INIT_HAPTIC | INIT_GAMECONTROLLER // all of the above subsystems
 	sdl.Init(sdl.INIT_EVERYTHING)
 
-	// TODO: enable / disable flags per module
+	// TODO: enable / disable log per module
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// load support for the JPG and PNG image formats
 	if image {
-		imgFlags := img.INIT_JPG|img.INIT_PNG;
+		imgFlags := img.INIT_JPG | img.INIT_PNG
 		if err := img.Init(imgFlags); err != imgFlags {
 			log.Fatalf("Failed to initialize IMG: %d (%s)\n", err, img.GetError())
 		}

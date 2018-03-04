@@ -42,7 +42,7 @@ func (i *Manager) HandleEvents(running bool) bool {
 }
 
 // PopEvent removes the first element added.
-// Usually pop return the element popped, but this one doesn't. I couldn't come up with a good name.
+// Usually pop returns the element popped, but this one doesn't. I couldn't come up with a good name.
 func (i *Manager) PopEvent() {
 	s := i.button
 	if len(s) > 0 {

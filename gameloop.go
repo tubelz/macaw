@@ -1,22 +1,21 @@
 package macaw
 
 import (
-	"log"
 	"github.com/tubelz/macaw/input"
 	"github.com/tubelz/macaw/system"
 	"github.com/veandco/go-sdl2/sdl"
+	"log"
 )
-
 
 // GameLoop is the data structure which will execute our systems in order.
 // inspired by http://www.koonsolo.com/news/dewitters-gameloop/
 type GameLoop struct {
-	InputManager *input.Manager
-	updateSystems []system.Systemer // responsible to update the game
-	renderSystem *system.RenderSystem // responsible to render the game
-	now uint32
-	nextTick uint32
-	fps uint32
+	InputManager  *input.Manager
+	updateSystems []system.Systemer    // responsible to update the game
+	renderSystem  *system.RenderSystem // responsible to render the game
+	now           uint32
+	nextTick      uint32
+	fps           uint32
 }
 
 // AddGameUpdateSystem adds the systems which will run in the game loop
@@ -42,9 +41,9 @@ func (g *GameLoop) render() {
 	g.renderSystem.UpdateTime(g.now)
 	// the accumulator is important for linear interpolation.
 	// If the value of next tick is greater it means we can interpolate,
-  	// if not it means we hit the max frame so our render is as up-to-date with the physics as possible
+	// if not it means we hit the max frame so our render is as up-to-date with the physics as possible
 	if g.nextTick > g.now {
-		g.renderSystem.UpdateAccumulator( (g.now + system.UpdateTickLength) - g.nextTick )
+		g.renderSystem.UpdateAccumulator((g.now + system.UpdateTickLength) - g.nextTick)
 	} else {
 		g.renderSystem.UpdateAccumulator(0)
 	}

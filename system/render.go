@@ -1,20 +1,20 @@
 package system
 
 import (
-	"log"
-	"github.com/tubelz/macaw/math"
 	"github.com/tubelz/macaw/entity"
+	"github.com/tubelz/macaw/math"
 	"github.com/veandco/go-sdl2/sdl"
+	"log"
 )
 
 // RenderSystem is probably one of the most important system. It is responsible to render (draw) the entities
 type RenderSystem struct {
-	Entities []entity.Entitier
-	Renderer *sdl.Renderer
-	BgColor sdl.Color
+	Entities    []entity.Entitier
+	Renderer    *sdl.Renderer
+	BgColor     sdl.Color
 	accumulator uint32 // used for interpolation
-	time uint32 // used for animation
-	Name string
+	time        uint32 // used for animation
+	Name        string
 }
 
 // Init initializes the render system using the current window
@@ -72,7 +72,7 @@ func (r *RenderSystem) Update() {
 			if physics.FuturePos == nil {
 				position.Pos.X = 0
 				position.Pos.Y = 0
-			}	else {
+			} else {
 				pos1 := &sdl.Point{int32(physics.FuturePos.X), int32(physics.FuturePos.Y)}
 				position.Pos = lerp(position.Pos, pos1, alpha)
 			}
@@ -141,7 +141,7 @@ func generateTextureFromFont(render *entity.RenderComponent, font *entity.FontCo
 	defer solid.Free()
 	//Create texture from surface pixels
 	newTexture, err = render.Renderer.CreateTextureFromSurface(solid)
-	if( err != nil ) {
+	if err != nil {
 		log.Fatal("Unable to create texture from %s! SDL Error: %s\n", font.Text, sdl.GetError())
 	}
 	render.Texture = newTexture
@@ -160,20 +160,20 @@ func drawGeometry(render *sdl.Renderer, pos *entity.PositionComponent, geometryC
 		// log.Printf("W: %v \\ H: %v", x, y)
 		rect := &sdl.Rect{x, y, w, h}
 		if g.Filled {
-			render.FillRect(rect);
+			render.FillRect(rect)
 		} else {
-			render.DrawRect(rect);
+			render.DrawRect(rect)
 		}
-		default:
-			log.Fatal("Geometry component not implemented in render function")
+	default:
+		log.Fatal("Geometry component not implemented in render function")
 	}
 }
 
 // lerp is the linear interpolation. pos0 is the old position, pos1 is the new position,
 // alpha is the coeficient of the linear interpolation
 func lerp(pos0, pos1 *sdl.Point, alpha float32) *sdl.Point {
-	x := math.Round(float32(pos1.X) * alpha + float32(pos0.X) * (1.0 - alpha))
-	y := math.Round(float32(pos1.Y) * alpha + float32(pos0.Y) * (1.0 - alpha))
+	x := math.Round(float32(pos1.X)*alpha + float32(pos0.X)*(1.0-alpha))
+	y := math.Round(float32(pos1.Y)*alpha + float32(pos0.Y)*(1.0-alpha))
 	return &sdl.Point{x, y}
 }
 
@@ -194,7 +194,7 @@ func nextAnimation(now uint32, anim *entity.AnimationComponent, currentRect *sdl
 	}
 	xMultiplier := anim.Current % anim.RowLength
 	yMultiplier := anim.Current / anim.RowLength
-	x := int32(xMultiplier) * currentRect.W + anim.InitialPos.X
-	y := int32(yMultiplier) * currentRect.H + anim.InitialPos.Y
+	x := int32(xMultiplier)*currentRect.W + anim.InitialPos.X
+	y := int32(yMultiplier)*currentRect.H + anim.InitialPos.Y
 	return &sdl.Rect{x, y, currentRect.W, currentRect.H}
 }

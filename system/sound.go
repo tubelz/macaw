@@ -7,7 +7,7 @@ import (
 
 type SoundSystem struct {
 	entities []*entity.Entitier
-	Name string
+	Name     string
 }
 
 // TODO: whole system

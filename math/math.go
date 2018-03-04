@@ -14,12 +14,12 @@ type FPoint struct {
 func SumPoint(a *sdl.Point, b *sdl.Point) *sdl.Point {
 	x := a.X + b.X
 	y := a.Y + b.Y
-	return &sdl.Point{x,y}
+	return &sdl.Point{x, y}
 }
 
 // SumFPoint sums two FPoints
 func SumFPoint(a *FPoint, b *FPoint) *FPoint {
-	return &FPoint{a.X+b.X, a.Y+b.Y}
+	return &FPoint{a.X + b.X, a.Y + b.Y}
 }
 
 // SumPointWithFPoint sums a FPoint to a Point
@@ -36,18 +36,18 @@ func ConvertPointToFPoint(a *sdl.Point) *FPoint {
 
 // MulFPointWithFloat multiply a FPoint with a float
 func MulFPointWithFloat(a *FPoint, b float32) *FPoint {
-	return &FPoint{a.X*b,a.Y*b}
+	return &FPoint{a.X * b, a.Y * b}
 }
 
 // MulPointWithInt multiply a point with an int
 func MulPointWithInt(a *sdl.Point, b int32) *sdl.Point {
-	return &sdl.Point{a.X*b,a.Y*b}
+	return &sdl.Point{a.X * b, a.Y * b}
 }
 
 // Round the float point to int
 func Round(num float32) int32 {
 	if num < 0 {
-		return int32(num-0.5)
+		return int32(num - 0.5)
 	}
-	return int32(num+0.5)
+	return int32(num + 0.5)
 }

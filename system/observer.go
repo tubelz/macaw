@@ -1,6 +1,7 @@
 package system
 
 import "log"
+
 /*
  This is the implementation of the Observer Pattern so we can
  track events and execute functions we are interested on for
@@ -18,7 +19,7 @@ type Event interface {
 
 // Subject holds the listerners and their handlers. An event can have multiple handlers.
 type Subject struct {
-		listeners map[string][]EventHandler
+	listeners map[string][]EventHandler
 }
 
 // AddHandler adds an event handler
@@ -31,7 +32,7 @@ func (s *Subject) AddHandler(eventName string, handler EventHandler) {
 
 // RemHandler removes an event handler
 func (s *Subject) RemHandler() {
-		//TODO
+	//TODO
 }
 
 // NotifyEvent executes all event handlers for a specific event
