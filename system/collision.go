@@ -1,16 +1,16 @@
 package system
 
 import (
-	"log"
 	"github.com/tubelz/macaw/entity"
 	"github.com/tubelz/macaw/math"
 	"github.com/veandco/go-sdl2/sdl"
+	"log"
 )
 
 // CollisionSystem is the system responsible to handle collisions
 type CollisionSystem struct {
 	Entities []entity.Entitier
-	Name string
+	Name     string
 	Subject
 }
 
@@ -34,6 +34,10 @@ func (c *CollisionSystem) Update() {
 		}
 		collision := component.(*entity.CollisionComponent)
 
+		// check collision with border
+		c.checkBorderCollision(obj.(*entity.Entity), position, collision)
+
+		// check collision with other entities
 		for _, obj2 := range c.Entities {
 			if obj == obj2 {
 				continue
@@ -50,16 +54,48 @@ func (c *CollisionSystem) Update() {
 			collision2 := component.(*entity.CollisionComponent)
 			rect1 := &sdl.Rect{position.Pos.X, position.Pos.Y, collision.Size.X, collision.Size.Y}
 			rect2 := &sdl.Rect{position2.Pos.X, position2.Pos.Y, collision2.Size.X, collision2.Size.Y}
-			if (rect1.HasIntersection(rect2)) {
+			if rect1.HasIntersection(rect2) {
 				c.NotifyEvent(&CollisionEvent{Ent: obj.(*entity.Entity), With: obj2.(*entity.Entity)})
 			}
 		}
 	}
 }
 
+// BorderEvent has the entity (Ent) that transpassed the border and which border
+type BorderEvent struct {
+	Ent  *entity.Entity
+	Side string
+}
+
+// Name returns the border event name
+func (b *BorderEvent) Name() string {
+	return "border event"
+}
+
+func (c *CollisionSystem) checkBorderCollision(obj *entity.Entity,
+	position *entity.PositionComponent,
+	collision *entity.CollisionComponent) {
+	// check each side. top and left don't require collision size
+	if position.Pos.X + collision.Size.X > 799 {
+		log.Printf("pos %v", position.Pos)
+		c.NotifyEvent(&BorderEvent{Ent: obj, Side: "right"})
+	} else if position.Pos.X < 1 {
+		log.Printf("pos %v", position.Pos)
+		c.NotifyEvent(&BorderEvent{Ent: obj, Side: "left"})
+	}
+
+	if position.Pos.Y < 1 {
+		log.Printf("pos %v", position.Pos)
+		c.NotifyEvent(&BorderEvent{Ent: obj, Side: "top"})
+	} else if position.Pos.Y + collision.Size.Y  > 599 {
+		log.Printf("pos %v", position.Pos)
+		c.NotifyEvent(&BorderEvent{Ent: obj, Side: "bottom"})
+	}
+}
+
 // CollisionEvent has the entity (Ent) that produced the collision and the entity that got collided (With)
 type CollisionEvent struct {
-	Ent *entity.Entity
+	Ent  *entity.Entity
 	With *entity.Entity
 }
 
@@ -118,7 +154,7 @@ func InvertVel(event Event) {
 		physics.Acc = math.MulFPointWithFloat(physics.Acc, -1)
 		if physics.Vel.X > 0 {
 			position.Pos.X = position.Pos.X + displacementPos.X
-		} else if physics.Vel.X < 0{
+		} else if physics.Vel.X < 0 {
 			position.Pos.X = position.Pos.X - displacementPos.X
 		}
 		if physics.Vel.Y > 0 {
