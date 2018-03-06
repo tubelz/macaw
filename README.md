@@ -9,6 +9,7 @@ Still under development and many improvements to be done.
 
 ## Installation and requirements
 
+* Go: https://golang.org/dl/
 * SDL2:
 	You will need to install SDL2 in your machine and the binding for Go.
 	You can find more information here: [https://github.com/veandco/go-sdl2](https://github.com/veandco/go-sdl2)
