@@ -11,26 +11,15 @@ import (
 // inspired by http://www.koonsolo.com/news/dewitters-gameloop/
 type GameLoop struct {
 	InputManager  *input.Manager
-	updateSystems []system.Systemer    // responsible to update the game
-	renderSystem  *system.RenderSystem // responsible to render the game
+	SceneManager
 	now           uint32
 	nextTick      uint32
 	fps           uint32
 }
 
-// AddGameUpdateSystem adds the systems which will run in the game loop
-func (g *GameLoop) AddGameUpdateSystem(system system.Systemer) {
-	g.updateSystems = append(g.updateSystems, system)
-}
-
-// AddRenderSystem adds the render system to our game loop
-func (g *GameLoop) AddRenderSystem(system *system.RenderSystem) {
-	g.renderSystem = system
-}
-
 // update game systems that can be updated every couple frames
 func (g *GameLoop) gameUpdate() {
-	for _, system := range g.updateSystems {
+	for _, system := range g.Current().UpdateSystems {
 		system.Update()
 	}
 	g.InputManager.PopEvent()
@@ -38,21 +27,25 @@ func (g *GameLoop) gameUpdate() {
 
 // make it be generic like game update
 func (g *GameLoop) render() {
-	g.renderSystem.UpdateTime(g.now)
+	current := g.Current()
+	current.RenderSystem.UpdateTime(g.now)
 	// the accumulator is important for linear interpolation.
 	// If the value of next tick is greater it means we can interpolate,
 	// if not it means we hit the max frame so our render is as up-to-date with the physics as possible
 	if g.nextTick > g.now {
-		g.renderSystem.UpdateAccumulator((g.now + system.UpdateTickLength) - g.nextTick)
+		current.RenderSystem.UpdateAccumulator((g.now + system.UpdateTickLength) - g.nextTick)
 	} else {
-		g.renderSystem.UpdateAccumulator(0)
+		current.RenderSystem.UpdateAccumulator(0)
 	}
-	g.renderSystem.Update()
+	current.RenderSystem.Update()
 	g.fps++
 }
 
 // Run executes the game loop
 func (g *GameLoop) Run() {
+	if g.Current() == nil {
+		log.Fatal("You need to add at least one scene")
+	}
 	fpsTick := sdl.GetTicks()
 	g.nextTick = fpsTick
 	for running := true; running; {

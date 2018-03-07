@@ -38,7 +38,6 @@ There are many features to be developed and improve current functionalities. In 
 
 * Tests
 * Sound system
-* Scene manager
 * GUI
 
 ## License
