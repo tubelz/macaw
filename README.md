@@ -13,6 +13,7 @@ Still under development and many improvements to be done.
 * SDL2:
 	You will need to install SDL2 in your machine and the binding for Go.
 	You can find more information here: [https://github.com/veandco/go-sdl2](https://github.com/veandco/go-sdl2)
+	Also, make sure if you are compiling from source code to enable CGO (`export CGO_ENABLED=1`)
 * Macaw framework: `go get github.com/tubelz/macaw`
 
 ## Usage
