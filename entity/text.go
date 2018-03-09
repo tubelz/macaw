@@ -19,7 +19,7 @@ func (f *MFont) Open() *ttf.Font {
 	var err error
 
 	if font, err = ttf.OpenFont(f.File, int(f.Size)); err != nil {
-		log.Fatal("Failed to open font: %s\n", err)
+		log.Fatalf("Failed to open font: %s\n", err)
 	}
 	f.font = font
 	return font
@@ -67,14 +67,14 @@ func (t *MText) GenerateRenderComponent() *RenderComponent {
 
 	//Load image at specified path
 	if solid, err = t.font.RenderUTF8Solid(t.Text, color); err != nil {
-		log.Fatal("Failed to render text: %s\n", err)
+		log.Fatalf("Failed to render text: %s\n", err)
 	}
 	defer solid.Free()
 
 	//Create texture from surface pixels
 	newTexture, err = t.renderer.CreateTextureFromSurface(solid)
 	if err != nil {
-		log.Fatal("Unable to create texture from %s! SDL Error: %s\n", t.Text, sdl.GetError())
+		log.Fatalf("Unable to create texture from %s! SDL Error: %s\n", t.Text, sdl.GetError())
 	}
 
 	component := &RenderComponent{Renderer: t.renderer, Texture: newTexture, Crop: &sdl.Rect{0, 0, solid.W, solid.H}}

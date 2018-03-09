@@ -136,13 +136,13 @@ func generateTextureFromFont(render *entity.RenderComponent, font *entity.FontCo
 	}
 	//Load image at specified path
 	if solid, err = font.Font.RenderUTF8Solid(font.Text, color); err != nil {
-		log.Fatal("Failed to render text: %s\n", err)
+		log.Fatalf("Failed to render text: %s\n", err)
 	}
 	defer solid.Free()
 	//Create texture from surface pixels
 	newTexture, err = render.Renderer.CreateTextureFromSurface(solid)
 	if err != nil {
-		log.Fatal("Unable to create texture from %s! SDL Error: %s\n", font.Text, sdl.GetError())
+		log.Fatalf("Unable to create texture from %s! SDL Error: %s\n", font.Text, sdl.GetError())
 	}
 	render.Texture = newTexture
 	render.Crop = &sdl.Rect{0, 0, solid.W, solid.H}

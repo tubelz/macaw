@@ -18,7 +18,7 @@ func TestRound(t *testing.T) {
 	for _, c := range cases {
 		got := Round(c.in)
 		if got != c.want {
-			t.Errorf("Round(%q) == %q, want %q", c.in, got, c.want)
+			t.Errorf("Round(%f) == %d, want %d", c.in, got, c.want)
 		}
 	}
 }

@@ -24,18 +24,18 @@ func (s *Spritesheet) Init(renderer *sdl.Renderer, fname string) {
 		log.Fatal("Render cannot be null")
 	}
 	if _, err = os.Stat(fname); os.IsNotExist(err) {
-		log.Fatal("File **%s** does not exist", fname)
+		log.Fatalf("File **%s** does not exist", fname)
 	}
 	//Load image at specified path
 	newSurface, err = img.Load(fname)
 	defer newSurface.Free()
 	if err != nil {
-		log.Fatal("Unable to load image %s! SDL_image Error: %s\n", fname, img.GetError())
+		log.Fatalf("Unable to load image %s! SDL_image Error: %s\n", fname, img.GetError())
 	} else {
 		//Create texture from surface pixels
 		newTexture, err = renderer.CreateTextureFromSurface(newSurface)
 		if err != nil {
-			log.Fatal("Unable to create texture from %s! SDL Error: %s\n", fname, sdl.GetError())
+			log.Fatalf("Unable to create texture from %s! SDL Error: %s\n", fname, sdl.GetError())
 		}
 	}
 	// set values on the struct

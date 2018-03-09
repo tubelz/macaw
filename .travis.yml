@@ -1,3 +1,11 @@
+before_install:
+    - sudo apt-get -qq update
+    - sudo apt-get install -y libegl1-mesa-dev libgles2-mesa-dev
+    # SDL2
+    - sudo apt-get install -y libsdl2{,-mixer,-image,-ttf,-gfx}-dev
+    # show sdl version for debug
+    - sdl2-config --version
+
 language: go
 
 go:
@@ -6,4 +14,8 @@ go:
   - "1.10.x"
   - master
 
-script: go test ./...
+script:
+  - go get -v github.com/veandco/go-sdl2/{sdl,mix,img,ttf}
+  - cd ../macaw
+  - go build
+  - go test ./...
