@@ -1,9 +1,9 @@
 package entity
 
 import (
-	"log"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
+	"log"
 )
 
 // MFont is the font struct that has the file, size and font pointer
@@ -33,9 +33,9 @@ func (f *MFont) Close() {
 // MText is the struct that has the rendering information
 type MText struct {
 	renderer *sdl.Renderer
-	font *ttf.Font
-	Text string
-	Color *sdl.Color
+	font     *ttf.Font
+	Text     string
+	Color    *sdl.Color
 }
 
 // Init initialize the MText struct
@@ -73,7 +73,7 @@ func (t *MText) GenerateRenderComponent() *RenderComponent {
 
 	//Create texture from surface pixels
 	newTexture, err = t.renderer.CreateTextureFromSurface(solid)
-	if( err != nil ) {
+	if err != nil {
 		log.Fatal("Unable to create texture from %s! SDL Error: %s\n", t.Text, sdl.GetError())
 	}
 

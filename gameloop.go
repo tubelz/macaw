@@ -10,11 +10,11 @@ import (
 // GameLoop is the data structure which will execute our systems in order.
 // inspired by http://www.koonsolo.com/news/dewitters-gameloop/
 type GameLoop struct {
-	InputManager  *input.Manager
+	InputManager *input.Manager
 	SceneManager
-	now           uint32
-	nextTick      uint32
-	fps           uint32
+	now      uint32
+	nextTick uint32
+	fps      uint32
 }
 
 // update game systems that can be updated every couple frames

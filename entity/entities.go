@@ -1,9 +1,9 @@
 package entity
 
 import (
+	"github.com/tubelz/macaw/math"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
-	"github.com/tubelz/macaw/math"
 )
 
 // entityCounter is responsible for count the amount of entities
@@ -25,7 +25,7 @@ type Entitier interface {
 // Entity is the struct that contains the components. Right now the id's are not being used
 type Entity struct {
 	// components
-	id uint16
+	id         uint16
 	components map[string]Component
 }
 
@@ -44,7 +44,7 @@ func (e *Entity) Init() {
 }
 
 // GetComponents returns a list of all the components of the entity
-func (e *Entity) GetComponents() (map[string]Component) {
+func (e *Entity) GetComponents() map[string]Component {
 	return e.components
 }
 
@@ -85,33 +85,33 @@ type PhysicsComponent struct {
 // RenderComponent is responsible for the rendering of the entity
 type RenderComponent struct {
 	Renderer *sdl.Renderer
-	Texture *sdl.Texture
-	Crop *sdl.Rect // part of the texture which will be displayed
+	Texture  *sdl.Texture
+	Crop     *sdl.Rect // part of the texture which will be displayed
 }
 
 // AnimationComponent is responsible for animate the entity
 type AnimationComponent struct {
-	InitialPos sdl.Point // frame reference
-	AnimationSpeed uint8 //animations per second
-	PreviousTime uint32 //last animation time
-	Current int
-	Frames int  // total sprites
-	RowLength	int  // number of sprites per row
-	SpriteMap map[string]int
+	InitialPos     sdl.Point // frame reference
+	AnimationSpeed uint8     //animations per second
+	PreviousTime   uint32    //last animation time
+	Current        int
+	Frames         int // total sprites
+	RowLength      int // number of sprites per row
+	SpriteMap      map[string]int
 }
 
 // FontComponent holds the font and text information
 type FontComponent struct {
-	Font *ttf.Font
-	Text string
+	Font     *ttf.Font
+	Text     string
 	Modified bool
-	Color *sdl.Color
+	Color    *sdl.Color
 }
 
 // RectangleComponent has the information to draw a rectangle
 type RectangleComponent struct {
-	Size *sdl.Point
-	Color *sdl.Color
+	Size   *sdl.Point
+	Color  *sdl.Color
 	Filled bool
 }
 
@@ -119,6 +119,6 @@ type RectangleComponent struct {
 // TODO: Add other type of information such as Shape, Density, Friction etc...
 type CollisionComponent struct {
 	// Size is duplicating data a little bit... we have this information
-  // in the render and geometry component, but we will use this attribute for now
+	// in the render and geometry component, but we will use this attribute for now
 	Size *sdl.Point
 }

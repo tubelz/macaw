@@ -1,17 +1,17 @@
 package entity
 
 import (
-	"os"
-	"log"
-	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/img"
+	"github.com/veandco/go-sdl2/sdl"
+	"log"
+	"os"
 )
 
 // Spritesheet has the information about the image
 type Spritesheet struct {
 	// renderer
 	Renderer *sdl.Renderer
-	Texture *sdl.Texture
+	Texture  *sdl.Texture
 	filename string
 }
 
@@ -20,7 +20,7 @@ func (s *Spritesheet) Init(renderer *sdl.Renderer, fname string) {
 	var newTexture *sdl.Texture
 	var newSurface *sdl.Surface
 	var err error
-	if (renderer == nil) {
+	if renderer == nil {
 		log.Fatal("Render cannot be null")
 	}
 	if _, err = os.Stat(fname); os.IsNotExist(err) {
@@ -29,12 +29,12 @@ func (s *Spritesheet) Init(renderer *sdl.Renderer, fname string) {
 	//Load image at specified path
 	newSurface, err = img.Load(fname)
 	defer newSurface.Free()
-	if (err != nil) {
+	if err != nil {
 		log.Fatal("Unable to load image %s! SDL_image Error: %s\n", fname, img.GetError())
 	} else {
 		//Create texture from surface pixels
 		newTexture, err = renderer.CreateTextureFromSurface(newSurface)
-		if( err != nil ) {
+		if err != nil {
 			log.Fatal("Unable to create texture from %s! SDL Error: %s\n", fname, sdl.GetError())
 		}
 	}

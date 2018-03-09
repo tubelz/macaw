@@ -85,9 +85,8 @@ func (s *Scene) AddRenderSystem(system *system.RenderSystem) {
 	s.RenderSystem = system
 }
 
-
 // SceneOptions contains the options for the scene
 type SceneOptions struct {
 	HideCursor bool // true - hides, false - shows
-	Music string
+	Music      string
 }

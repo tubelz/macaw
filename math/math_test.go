@@ -4,7 +4,7 @@ import "testing"
 
 func TestRound(t *testing.T) {
 	cases := []struct {
-		in float32
+		in   float32
 		want int32
 	}{
 		{3.14, 3},
