@@ -23,6 +23,7 @@ func (g *GameLoop) gameUpdate() {
 		system.Update()
 	}
 	g.InputManager.PopEvent()
+	g.InputManager.Mouse.ClearMouseEvent()
 }
 
 // make it be generic like game update

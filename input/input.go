@@ -8,9 +8,15 @@ import (
 // Manager hold data of events
 type Manager struct {
 	// TODO: 1) Implement Command Pattern?
-	//       2) Implement Mouse Handler
 	button []*sdl.KeyboardEvent
-	// mouseHandler
+	Mouse MouseEvent
+}
+
+// MouseEvent has the position and button pressed by the mouse
+type MouseEvent struct {
+	Pos *sdl.Point
+	Button uint8 // BUTTON_LEFT, BUTTON_MIDDLE, BUTTON_RIGHT, BUTTON_X1, BUTTON_X2
+	State uint8 // PRESSED, RELEASE
 }
 
 // HandleEvents handle the events such as key pressed and mouse movements.
@@ -31,9 +37,11 @@ func (i *Manager) HandleEvents(running bool) bool {
 				// 						t.Timestamp, t.Type, t.Keysym.Sym, t.Keysym.Sym, t.Keysym.Mod, t.State, t.Repeat)
 
 			case *sdl.MouseMotionEvent:
-				//TODO
+				pos := &sdl.Point{t.X, t.Y}
+				i.Mouse.Pos = pos
 			case *sdl.MouseButtonEvent:
-				//TODO
+				i.Mouse.Button = t.Button
+				i.Mouse.State = t.State
 			default:
 				log.Printf("Event not mapped")
 		}
@@ -50,6 +58,11 @@ func (i *Manager) PopEvent() {
 		s[len(s)-1] = nil
 		i.button = s[:len(s)-1]
 	}
+}
+
+// ClearMouseEvent sets the id of the button to 0 which no mouse button is assigned to
+func (m *MouseEvent) ClearMouseEvent() {
+	m.Button = 0
 }
 
 // Button returns the first button pressed. Usefull to use in multiple systems
