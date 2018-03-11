@@ -2,6 +2,7 @@ package macaw
 
 import (
 	"github.com/veandco/go-sdl2/img"
+	"github.com/veandco/go-sdl2/mix"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 	"log"
@@ -60,6 +61,13 @@ func Initialize(image, font, sound bool) error {
 	if sound {
 		if err := sdl.Init(sdl.INIT_AUDIO); err != nil {
 			log.Fatalf("Failed to initialize MIX: %s\n", err)
+		}
+		soundFlags := mix.INIT_FLAC | mix.INIT_OGG
+		if err := mix.Init(soundFlags); err != nil {
+			log.Println(err)
+		}
+		if err := mix.OpenAudio(22050, mix.DEFAULT_FORMAT, 2, 4096); err != nil {
+			log.Println(err)
 		}
 	}
 

@@ -66,13 +66,12 @@ type Scene struct {
 	SceneOptions
 }
 
-// Init initializes the scene
+// Init initializes the scene according to the options
 func (s *Scene) Init() {
-	show := 1
-	if s.HideCursor {
-		show = 0
-	}
-	sdl.ShowCursor(show)
+	// HideCursor option
+	s.showCursor()
+	// Music option
+	s.playMusic()
 }
 
 // AddGameUpdateSystem adds the systems which will run in the game loop
@@ -89,4 +88,20 @@ func (s *Scene) AddRenderSystem(system *system.RenderSystem) {
 type SceneOptions struct {
 	HideCursor bool // true - hides, false - shows
 	Music      string
+}
+
+func (s *SceneOptions) showCursor() {
+	show := 1
+	if s.HideCursor {
+		show = 0
+	}
+	sdl.ShowCursor(show)
+}
+
+func (s *SceneOptions) playMusic() {
+	if s.Music != "" {
+		PlayMusic(s.Music)
+	} else {
+		StopMusic()
+	}
 }
