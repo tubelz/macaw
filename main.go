@@ -81,3 +81,17 @@ func Initialize(image, font, sound bool) error {
 	sdl.StopTextInput()
 	return err
 }
+
+// Quit cleans up all initialized subsystems
+func Quit() {
+	// Close SDL packages
+	img.Quit()
+	ttf.Quit()
+	for _, _, _, open, err := mix.QuerySpec(); err == nil && open > 0; _, _, _, open, err = mix.QuerySpec() {
+		log.Println("closing")
+		mix.CloseAudio()
+	}
+	mix.Quit()
+	// Close SDL
+	sdl.Quit()
+}
