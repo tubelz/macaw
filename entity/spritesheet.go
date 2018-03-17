@@ -45,7 +45,7 @@ func (s *Spritesheet) Init(renderer *sdl.Renderer, fname string) {
 }
 
 // LoadSprite add the information of the sprite to the render component
-func (s *Spritesheet) LoadSprite(crop *sdl.Rect, frames int, rowLength int) RenderComponent {
+func (s *Spritesheet) LoadSprite(crop *sdl.Rect) RenderComponent {
 	sprite := RenderComponent{Renderer: s.Renderer, Texture: s.Texture, Crop: crop}
 	return sprite
 }
