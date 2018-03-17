@@ -110,7 +110,8 @@ func (r *RenderSystem) Update() {
 		}
 
 		// Draw
-		r.Renderer.Copy(render.Texture, render.Crop, &sdl.Rect{position.Pos.X, position.Pos.Y, render.Crop.W, render.Crop.H})
+		dst := &sdl.Rect{position.Pos.X, position.Pos.Y, render.Crop.W, render.Crop.H}
+		r.Renderer.CopyEx(render.Texture, render.Crop, dst, render.Angle, render.Center, render.Flip)
 	}
 	r.Renderer.Present()
 }

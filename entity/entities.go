@@ -87,6 +87,9 @@ type RenderComponent struct {
 	Renderer *sdl.Renderer
 	Texture  *sdl.Texture
 	Crop     *sdl.Rect // part of the texture which will be displayed
+	Angle    float64
+	Center   *sdl.Point
+	Flip     sdl.RendererFlip
 }
 
 // AnimationComponent is responsible for animate the entity
