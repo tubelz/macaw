@@ -72,6 +72,12 @@ func (s *Scene) Init() {
 	s.showCursor()
 	// Music option
 	s.playMusic()
+	// change background color
+	if s.BgColor != (sdl.Color{}) {
+		s.RenderSystem.BgColor = s.BgColor
+	} else {
+		s.RenderSystem.BgColor = sdl.Color{0xFF, 0xFF, 0xFF, 0xFF}
+	}
 }
 
 // AddGameUpdateSystem adds the systems which will run in the game loop
@@ -88,6 +94,7 @@ func (s *Scene) AddRenderSystem(system *system.RenderSystem) {
 type SceneOptions struct {
 	HideCursor bool // true - hides, false - shows
 	Music      string
+	BgColor    sdl.Color
 }
 
 func (s *SceneOptions) showCursor() {
