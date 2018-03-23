@@ -12,8 +12,9 @@ type RenderSystem struct {
 	Entities    []entity.Entitier
 	Renderer    *sdl.Renderer
 	BgColor     sdl.Color
-	accumulator uint32 // used for interpolation
-	time        uint32 // used for animation
+	Camera      entity.Entitier // entity that have the camera component
+	accumulator uint32          // used for interpolation
+	time        uint32          // used for animation
 	Name        string
 }
 
@@ -42,6 +43,45 @@ func (r *RenderSystem) UpdateAccumulator(accumulator uint32) {
 // UpdateTime update the time
 func (r *RenderSystem) UpdateTime(time uint32) {
 	r.time = time
+}
+
+// SetCamera sets the camera which controls what will be rendered
+func (r *RenderSystem) SetCamera(camera entity.Entitier) {
+	r.Camera = camera
+}
+
+// GetCameraPosition gets the camera position
+func (r *RenderSystem) GetCameraPosition() (int32, int32) {
+	if component, ok := r.Camera.GetComponent("position"); ok {
+		position := component.(*entity.PositionComponent)
+		return position.Pos.X, position.Pos.Y
+	}
+	return 0, 0
+}
+
+// OffsetPosition changes the cartesian position according to the camera
+func (r *RenderSystem) OffsetPosition(x, y int32) (int32, int32) {
+	camX, camY := r.GetCameraPosition()
+	x -= camX
+	y -= camY
+	return x, y
+}
+
+func (r *RenderSystem) isRenderable(pos *sdl.Point, size *sdl.Rect) bool {
+	if r.Camera == nil {
+		return false
+	}
+	if component, ok := r.Camera.GetComponent("position"); ok {
+		position := component.(*entity.PositionComponent)
+		c, _ := r.Camera.GetComponent("camera")
+		camera := c.(*entity.CameraComponent)
+
+		// check
+		objRect := &sdl.Rect{pos.X, pos.Y, size.W, size.H}
+		cameraRect := sdl.Rect{position.Pos.X, position.Pos.Y, camera.ViewportSize.X, camera.ViewportSize.Y}
+		return cameraRect.HasIntersection(objRect)
+	}
+	return false
 }
 
 // Update will draw the entities accordingly to their position.
@@ -81,7 +121,7 @@ func (r *RenderSystem) Update() {
 		// Geometry component
 		component, ok = components["geometry"]
 		if ok {
-			drawGeometry(r.Renderer, position, component)
+			r.drawGeometry(r.Renderer, position, component)
 			continue
 		}
 
@@ -110,8 +150,18 @@ func (r *RenderSystem) Update() {
 		}
 
 		// Draw
-		dst := &sdl.Rect{position.Pos.X, position.Pos.Y, render.Crop.W, render.Crop.H}
-		r.Renderer.CopyEx(render.Texture, render.Crop, dst, render.Angle, render.Center, render.Flip)
+		// Offset according to the camera
+		crop := *render.Crop
+		if render.Scroll {
+			crop.X, crop.Y = r.GetCameraPosition()
+			// x, y = r.OffsetPosition(render.Crop.X, render.Crop.Y)
+		} else if !r.isRenderable(position.Pos, render.Crop) {
+			// check if it is necessary to render
+			continue
+		}
+		x, y := r.OffsetPosition(position.Pos.X, position.Pos.Y)
+		dst := &sdl.Rect{x, y, render.Crop.W, render.Crop.H}
+		r.Renderer.CopyEx(render.Texture, &crop, dst, render.Angle, render.Center, render.Flip)
 	}
 	r.Renderer.Present()
 }
@@ -150,7 +200,7 @@ func generateTextureFromFont(render *entity.RenderComponent, font *entity.FontCo
 }
 
 // drawGeometry draws on the renderer the geometry. We don't use texture, because it's faster to draw directly using the renderer
-func drawGeometry(render *sdl.Renderer, pos *entity.PositionComponent, geometryComponent interface{}) {
+func (r *RenderSystem) drawGeometry(render *sdl.Renderer, pos *entity.PositionComponent, geometryComponent interface{}) {
 	switch g := geometryComponent.(type) {
 	case *entity.RectangleComponent:
 		render.SetDrawColor(g.Color.R, g.Color.G, g.Color.B, g.Color.A)
@@ -158,8 +208,14 @@ func drawGeometry(render *sdl.Renderer, pos *entity.PositionComponent, geometryC
 		y := pos.Pos.Y
 		w := g.Size.X
 		h := g.Size.Y
-		// log.Printf("W: %v \\ H: %v", x, y)
+		// Offset position according to camera
+		x, y = r.OffsetPosition(x, y)
+		// Result of rectangle to draw
 		rect := &sdl.Rect{x, y, w, h}
+		// check if it is necessary to render
+		if !r.isRenderable(pos.Pos, rect) {
+			return
+		}
 		if g.Filled {
 			render.FillRect(rect)
 		} else {

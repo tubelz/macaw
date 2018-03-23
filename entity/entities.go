@@ -87,9 +87,17 @@ type RenderComponent struct {
 	Renderer *sdl.Renderer
 	Texture  *sdl.Texture
 	Crop     *sdl.Rect // part of the texture which will be displayed
+	Scroll   bool
 	Angle    float64
 	Center   *sdl.Point
 	Flip     sdl.RendererFlip
+}
+
+// CameraComponent is responsible to render only the content of the viewport
+type CameraComponent struct {
+	ViewportSize sdl.Point
+	WorldSize    sdl.Point
+	IsActive     bool
 }
 
 // AnimationComponent is responsible for animate the entity
