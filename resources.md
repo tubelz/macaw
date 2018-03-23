@@ -5,6 +5,7 @@ Sources used to study:
 * https://gafferongames.com/post/fix_your_timestep/
 * http://vasir.net/blog/game-development/how-to-build-entity-component-system-in-javascript
 * https://www.gamedev.net/forums/topic/669494-dealing-with-different-collision-responses-in-an-entity-component-system/
+* http://lazyfoo.net/tutorials/SDL/
 
 I also read the book **Game Programming Patterns** by Robert Nystrom. Very easy to read and to go through...
 
