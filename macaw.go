@@ -20,7 +20,9 @@ const (
 // We only have one input manager for now and one window, so they are going to be globals
 var (
 	// Window is the window of our game
-	Window *sdl.Window
+	Window    *sdl.Window
+	logFatal  = log.Fatal  // replace for variable so we can change in the test
+	logFatalf = log.Fatalf // replace for variable so we can change in the test
 )
 
 // Initialize SDL
@@ -46,21 +48,21 @@ func Initialize(image, font, sound bool) error {
 	if image {
 		imgFlags := img.INIT_JPG | img.INIT_PNG
 		if err := img.Init(imgFlags); err != imgFlags {
-			log.Fatalf("Failed to initialize IMG: %d (%s)\n", err, img.GetError())
+			logFatalf("Failed to initialize IMG: %d (%s)\n", err, img.GetError())
 		}
 	}
 
 	// load ttf support
 	if font {
 		if err := ttf.Init(); err != nil {
-			log.Fatalf("Failed to initialize TTF: %s\n", err)
+			logFatalf("Failed to initialize TTF: %s\n", err)
 		}
 	}
 
 	// load sound support
 	if sound {
 		if err := sdl.Init(sdl.INIT_AUDIO); err != nil {
-			log.Fatalf("Failed to initialize MIX: %s\n", err)
+			logFatalf("Failed to initialize MIX: %s\n", err)
 		}
 		soundFlags := mix.INIT_FLAC | mix.INIT_OGG
 		if err := mix.Init(soundFlags); err != nil {
@@ -73,7 +75,7 @@ func Initialize(image, font, sound bool) error {
 
 	// we are only creating one window for now, so Window will be a global
 	if window, err = sdl.CreateWindow(WinTitle, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, WinWidth, WinHeight, sdl.WINDOW_SHOWN); err != nil {
-		log.Fatalf("Failed to create window: %s\n", err)
+		logFatalf("Failed to create window: %s\n", err)
 	}
 	Window = window
 

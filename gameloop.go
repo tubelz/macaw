@@ -45,7 +45,7 @@ func (g *GameLoop) render() {
 // Run executes the game loop
 func (g *GameLoop) Run() {
 	if g.Current() == nil {
-		log.Fatal("You need to add at least one scene")
+		logFatal("You need to add at least one scene")
 	}
 	fpsTick := sdl.GetTicks()
 	g.nextTick = fpsTick

@@ -4,7 +4,6 @@ import (
 	"github.com/tubelz/macaw/entity"
 	"github.com/tubelz/macaw/math"
 	"github.com/veandco/go-sdl2/sdl"
-	"log"
 )
 
 // RenderSystem is probably one of the most important system. It is responsible to render (draw) the entities
@@ -22,7 +21,7 @@ type RenderSystem struct {
 func (r *RenderSystem) Init(window *sdl.Window) {
 	var err error
 	if r.Renderer, err = sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED); err != nil {
-		log.Fatalf("Renderer could not be created! SDL Error: %s\n", sdl.GetError())
+		logFatalf("Renderer could not be created! SDL Error: %s\n", sdl.GetError())
 	} else {
 		//Initialize renderer color
 		r.BgColor = sdl.Color{0xFF, 0xFF, 0xFF, 0xFF}
@@ -174,10 +173,10 @@ func generateTextureFromFont(render *entity.RenderComponent, font *entity.FontCo
 	var err error
 	// Error checking
 	if render == nil {
-		log.Fatal("Error: Render cannot be null")
+		logFatal("Error: Render cannot be null")
 	}
 	if font == nil {
-		log.Fatal("Error: Font cannot be null")
+		logFatal("Error: Font cannot be null")
 	}
 	// Get color. If color is not set, make it black
 	if font.Color == nil {
@@ -187,13 +186,13 @@ func generateTextureFromFont(render *entity.RenderComponent, font *entity.FontCo
 	}
 	//Load image at specified path
 	if solid, err = font.Font.RenderUTF8Solid(font.Text, color); err != nil {
-		log.Fatalf("Failed to render text: %s\n", err)
+		logFatalf("Failed to render text: %s\n", err)
 	}
 	defer solid.Free()
 	//Create texture from surface pixels
 	newTexture, err = render.Renderer.CreateTextureFromSurface(solid)
 	if err != nil {
-		log.Fatalf("Unable to create texture from %s! SDL Error: %s\n", font.Text, sdl.GetError())
+		logFatalf("Unable to create texture from %s! SDL Error: %s\n", font.Text, sdl.GetError())
 	}
 	render.Texture = newTexture
 	render.Crop = &sdl.Rect{0, 0, solid.W, solid.H}
@@ -222,7 +221,7 @@ func (r *RenderSystem) drawGeometry(render *sdl.Renderer, pos *entity.PositionCo
 			render.DrawRect(rect)
 		}
 	default:
-		log.Fatal("Geometry component not implemented in render function")
+		logFatal("Geometry component not implemented in render function")
 	}
 }
 

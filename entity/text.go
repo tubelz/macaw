@@ -3,7 +3,6 @@ package entity
 import (
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
-	"log"
 )
 
 // MFont is the font struct that has the file, size and font pointer
@@ -19,7 +18,7 @@ func (f *MFont) Open() *ttf.Font {
 	var err error
 
 	if font, err = ttf.OpenFont(f.File, int(f.Size)); err != nil {
-		log.Fatalf("Failed to open font: %s\n", err)
+		logFatalf("Failed to open font: %s\n", err)
 	}
 	f.font = font
 	return font
@@ -52,10 +51,10 @@ func (t *MText) GenerateRenderComponent() *RenderComponent {
 	var err error
 
 	if t.renderer == nil {
-		log.Fatal("Error: Render cannot be null")
+		logFatal("Error: Render cannot be null")
 	}
 	if t.font == nil {
-		log.Fatal("Error: Font cannot be null")
+		logFatal("Error: Font cannot be null")
 	}
 
 	// Get color. If color is not set, make it black
@@ -67,14 +66,14 @@ func (t *MText) GenerateRenderComponent() *RenderComponent {
 
 	//Load image at specified path
 	if solid, err = t.font.RenderUTF8Solid(t.Text, color); err != nil {
-		log.Fatalf("Failed to render text: %s\n", err)
+		logFatalf("Failed to render text: %s\n", err)
 	}
 	defer solid.Free()
 
 	//Create texture from surface pixels
 	newTexture, err = t.renderer.CreateTextureFromSurface(solid)
 	if err != nil {
-		log.Fatalf("Unable to create texture from %s! SDL Error: %s\n", t.Text, sdl.GetError())
+		logFatalf("Unable to create texture from %s! SDL Error: %s\n", t.Text, sdl.GetError())
 	}
 
 	component := &RenderComponent{Renderer: t.renderer, Texture: newTexture, Crop: &sdl.Rect{0, 0, solid.W, solid.H}}

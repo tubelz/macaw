@@ -3,7 +3,6 @@ package entity
 import (
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
-	"log"
 	"os"
 )
 
@@ -21,21 +20,21 @@ func (s *Spritesheet) Init(renderer *sdl.Renderer, fname string) {
 	var newSurface *sdl.Surface
 	var err error
 	if renderer == nil {
-		log.Fatal("Render cannot be null")
+		logFatal("Render cannot be null")
 	}
 	if _, err = os.Stat(fname); os.IsNotExist(err) {
-		log.Fatalf("File **%s** does not exist", fname)
+		logFatalf("File **%s** does not exist", fname)
 	}
 	//Load image at specified path
 	newSurface, err = img.Load(fname)
 	defer newSurface.Free()
 	if err != nil {
-		log.Fatalf("Unable to load image %s! SDL_image Error: %s\n", fname, img.GetError())
+		logFatalf("Unable to load image %s! SDL_image Error: %s\n", fname, img.GetError())
 	} else {
 		//Create texture from surface pixels
 		newTexture, err = renderer.CreateTextureFromSurface(newSurface)
 		if err != nil {
-			log.Fatalf("Unable to create texture from %s! SDL Error: %s\n", fname, sdl.GetError())
+			logFatalf("Unable to create texture from %s! SDL Error: %s\n", fname, sdl.GetError())
 		}
 	}
 	// set values on the struct
