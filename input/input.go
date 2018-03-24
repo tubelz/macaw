@@ -20,7 +20,8 @@ type MouseEvent struct {
 }
 
 // HandleEvents handle the events such as key pressed and mouse movements.
-func (i *Manager) HandleEvents(running bool) bool {
+func (i *Manager) HandleEvents() bool {
+	running := true
 	var event sdl.Event
 	for event = sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 

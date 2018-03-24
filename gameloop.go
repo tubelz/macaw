@@ -50,9 +50,9 @@ func (g *GameLoop) Run() {
 	fpsTick := sdl.GetTicks()
 	g.nextTick = fpsTick
 	for running := true; running; {
-		running = g.InputManager.HandleEvents(running)
+		running = g.InputManager.HandleEvents()
 		g.now = sdl.GetTicks()
-		for loops := 0; g.now >= g.nextTick && loops < system.MaxFrameskip; loops++ {
+		for loops := 0; g.now >= g.nextTick; loops++ {
 			g.gameUpdate()
 			g.nextTick += system.UpdateTickLength
 		}

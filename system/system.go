@@ -10,8 +10,6 @@ const (
 	ticksPerSecond = 50
 	// UpdateTickLength is the length per update. The game will be updated at a steady 50 times per second,
 	UpdateTickLength = 1000 / ticksPerSecond
-	// MaxFrameskip is the number of max frames per game update
-	MaxFrameskip = 5
 )
 
 var (
