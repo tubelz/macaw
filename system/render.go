@@ -151,14 +151,17 @@ func (r *RenderSystem) Update() {
 		// Draw
 		// Offset according to the camera
 		crop := *render.Crop
+		var x, y int32
 		if render.Scroll {
 			crop.X, crop.Y = r.GetCameraPosition()
-			// x, y = r.OffsetPosition(render.Crop.X, render.Crop.Y)
+			x = position.Pos.X
+			y = position.Pos.Y
 		} else if !r.isRenderable(position.Pos, render.Crop) {
 			// check if it is necessary to render
 			continue
+		} else {
+			x, y = r.OffsetPosition(position.Pos.X, position.Pos.Y)
 		}
-		x, y := r.OffsetPosition(position.Pos.X, position.Pos.Y)
 		dst := &sdl.Rect{x, y, render.Crop.W, render.Crop.H}
 		r.Renderer.CopyEx(render.Texture, &crop, dst, render.Angle, render.Center, render.Flip)
 	}
