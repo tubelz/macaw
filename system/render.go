@@ -89,6 +89,10 @@ func (r *RenderSystem) Update() {
 	var ok bool
 	var component interface{}
 
+	if r.Camera == nil {
+		logFatal("Please, assign at least one camera to the render system")
+	}
+
 	r.Renderer.SetDrawColor(r.BgColor.R, r.BgColor.G, r.BgColor.B, r.BgColor.A)
 	r.Renderer.Clear()
 
