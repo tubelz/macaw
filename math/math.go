@@ -19,6 +19,11 @@ func SumPoint(a *sdl.Point, b *sdl.Point) *sdl.Point {
 
 // SumFPoint sums two FPoints
 func SumFPoint(a *FPoint, b *FPoint) *FPoint {
+	if a == nil {
+		return b
+	} else if b == nil {
+		return a
+	}
 	return &FPoint{a.X + b.X, a.Y + b.Y}
 }
 
