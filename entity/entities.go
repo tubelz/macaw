@@ -4,12 +4,6 @@ import (
 	"github.com/tubelz/macaw/math"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
-	"log"
-)
-
-var (
-	logFatal  = log.Fatal  // replace for variable so we can change in the test
-	logFatalf = log.Fatalf // replace for variable so we can change in the test
 )
 
 // entityCounter is responsible for count the amount of entities

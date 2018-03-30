@@ -3,6 +3,7 @@ package macaw
 import (
 	"github.com/tubelz/macaw/entity"
 	"github.com/tubelz/macaw/input"
+	"github.com/tubelz/macaw/internal/utils"
 	"github.com/tubelz/macaw/system"
 	"github.com/veandco/go-sdl2/sdl"
 	"testing"
@@ -11,7 +12,7 @@ import (
 
 // TestGameLoop_Run checks if our gameloop runs with a basic setup
 func TestGameLoop_Run(t *testing.T) {
-	setup(t)
+	utils.SetupLog(t)
 	// This is also consider setup. We are adding what it needs to be added so our game loop can be ran
 	input := &input.Manager{}
 	sceneGame := &Scene{Name: "game"}
@@ -27,5 +28,5 @@ func TestGameLoop_Run(t *testing.T) {
 	}()
 	gameLoop.Run()
 
-	teardown()
+	utils.TeardownLog()
 }

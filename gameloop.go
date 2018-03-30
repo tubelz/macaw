@@ -2,6 +2,7 @@ package macaw
 
 import (
 	"github.com/tubelz/macaw/input"
+	"github.com/tubelz/macaw/internal/utils"
 	"github.com/tubelz/macaw/system"
 	"github.com/veandco/go-sdl2/sdl"
 	"log"
@@ -45,7 +46,7 @@ func (g *GameLoop) render() {
 // Run executes the game loop
 func (g *GameLoop) Run() {
 	if g.Current() == nil {
-		logFatal("You need to add at least one scene")
+		utils.LogFatal("You need to add at least one scene")
 	}
 	fpsTick := sdl.GetTicks()
 	g.nextTick = fpsTick
