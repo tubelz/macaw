@@ -23,12 +23,14 @@ You can find a working example in the repository [https://github.com/tubelz/pong
 That example covers many functionalities such as:
 
 * Initialization
-* Usage of gameloop
-* Usage of components
-* Usage of systems
-* Usage of observers
+* Game loop
+* Usage of entities, components and systems (**ECS**)
+* Scene
+* Camera
+* Observers
 * Creating a new system
-* Usage of fonts
+* Fonts
+* Input handler
 
 ## Discussion (issues/suggestions)
 If you have questions or suggestions you can go to **##macaw** at [freenode.net](https://freenode.net).
@@ -37,8 +39,8 @@ If there is a bug you can open an issue here.
 ## Development
 There are many features to be developed and improve current functionalities. In the queue:
 
+* Entity and System manager
 * Tests
-* Sound system
 * GUI
 
 ## License
