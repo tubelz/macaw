@@ -6,16 +6,12 @@ import (
 	"github.com/veandco/go-sdl2/ttf"
 )
 
-// entityCounter is responsible for count the amount of entities
-var entityCounter uint16
-
 // Component is the abstract type for each component
 type Component interface{}
 
 // Entitier has all the behaviours entities should have
 type Entitier interface {
 	GetID() uint16
-	Init()
 	GetComponents() map[string]Component
 	AddComponent(string, Component)
 	DelComponent(key string)
@@ -32,15 +28,6 @@ type Entity struct {
 // GetID the id of the entity
 func (e *Entity) GetID() uint16 {
 	return e.id
-}
-
-// Init adds the id and increments the counter.
-func (e *Entity) Init() {
-	e.id = entityCounter
-	entityCounter++
-	if e.components == nil {
-		e.components = make(map[string]Component)
-	}
 }
 
 // GetComponents returns a list of all the components of the entity
@@ -62,6 +49,64 @@ func (e *Entity) AddComponent(name string, c Component) {
 // DelComponent removes the given component
 func (e *Entity) DelComponent(key string) {
 	delete(e.components, key)
+}
+
+// Manager is the struct responsible to manage the entities in your game
+type Manager struct {
+	// count entities allocated
+	counter        uint16
+	entities       []*Entity
+	availableSlots []uint16
+}
+
+// Create creates a new entity and returns it
+func (m *Manager) Create() *Entity {
+	var i uint16
+	entity := new(Entity)
+
+	// check if we can use an empty slot of our array, or if we have to add a new position
+	if len(m.availableSlots) > 0 {
+		// pop the first id that was deleted if there is any deleted element. we use FIFO here
+		i = m.availableSlots[0]
+		m.availableSlots = append(m.availableSlots[:0], m.availableSlots[1:]...)
+		entity.id = i
+		m.entities[i] = entity
+	} else {
+		entity.id = m.counter
+		m.counter++
+		m.entities = append(m.entities, entity)
+	}
+	entity.components = make(map[string]Component)
+
+	return entity
+}
+
+// Delete removes an entity associated to the given id
+func (m *Manager) Delete(id uint16) bool {
+	if m.entities[id] == nil {
+		return false
+	}
+	var entity *Entity
+	entity = nil
+	m.entities[id] = entity
+
+	m.availableSlots = append(m.availableSlots, id)
+
+	return true
+}
+
+// Get gets an entity from the array of entities given an id
+func (m *Manager) Get(id uint16) *Entity {
+	if id < m.counter {
+		return m.entities[id]
+	}
+	var entity *Entity
+	return entity
+}
+
+// GetAll gets all entities
+func (m *Manager) GetAll() []*Entity {
+	return m.entities
 }
 
 /////////////////////////////////////////////////
