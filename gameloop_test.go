@@ -15,8 +15,9 @@ func TestGameLoop_Run(t *testing.T) {
 	utils.SetupLog(t)
 	// This is also consider setup. We are adding what it needs to be added so our game loop can be ran
 	input := &input.Manager{}
+	em := &entity.Manager{}
 	sceneGame := &Scene{Name: "game"}
-	sceneGame.AddRenderSystem(&system.RenderSystem{Camera: &entity.Entity{}})
+	sceneGame.AddRenderSystem(&system.RenderSystem{Camera: &entity.Entity{}, EntityManager: em})
 	gameLoop := &GameLoop{InputManager: input}
 	gameLoop.AddScene(sceneGame)
 	// close game after 100 milliseconds
