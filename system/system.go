@@ -1,8 +1,7 @@
 package system
 
 import (
-	"github.com/tubelz/macaw/entity"
-	"log"
+	"github.com/tubelz/macaw/internal/utils"
 )
 
 const (
@@ -13,12 +12,14 @@ const (
 )
 
 var (
-	logFatal  = log.Fatal  // replace for variable so we can change in the test
-	logFatalf = log.Fatalf // replace for variable so we can change in the test
+	logFatal  = utils.LogFatal // replace for variable so we can change in the test
+	logFatalf = utils.LogFatal // replace for variable so we can change in the test
 )
 
 // Systemer is the interface containing behaviours that every system should have
 type Systemer interface {
-	Assign([]entity.Entitier)
+	// Update will be run in the game loop whenever possible
 	Update()
+	// Init is used to do whatever the system should do before being updated
+	Init()
 }

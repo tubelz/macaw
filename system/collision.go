@@ -9,22 +9,20 @@ import (
 
 // CollisionSystem is the system responsible to handle collisions
 type CollisionSystem struct {
-	Entities []entity.Entitier
-	Name     string
+	EntityManager *entity.Manager
+	Name          string
 	Subject
 }
 
-// Assign assign entities with this system
-func (c *CollisionSystem) Assign(entities []entity.Entitier) {
-	c.Entities = entities
-}
+// Init initializes this system. So far it does nothing.
+func (c *CollisionSystem) Init() {}
 
 // Update check for collision and notify observers
 func (c *CollisionSystem) Update() {
 	var component interface{}
 	var ok bool
 
-	for _, obj := range c.Entities {
+	for _, obj := range c.EntityManager.GetAll() {
 		if component, ok = obj.GetComponent("position"); !ok {
 			continue
 		}
@@ -35,10 +33,10 @@ func (c *CollisionSystem) Update() {
 		collision := component.(*entity.CollisionComponent)
 
 		// check collision with border
-		c.checkBorderCollision(obj.(*entity.Entity), position, collision)
+		c.checkBorderCollision(obj, position, collision)
 
 		// check collision with other entities
-		for _, obj2 := range c.Entities {
+		for _, obj2 := range c.EntityManager.GetAll() {
 			if obj == obj2 {
 				continue
 			}
@@ -55,7 +53,7 @@ func (c *CollisionSystem) Update() {
 			rect1 := &sdl.Rect{position.Pos.X, position.Pos.Y, collision.Size.X, collision.Size.Y}
 			rect2 := &sdl.Rect{position2.Pos.X, position2.Pos.Y, collision2.Size.X, collision2.Size.Y}
 			if rect1.HasIntersection(rect2) {
-				c.NotifyEvent(&CollisionEvent{Ent: obj.(*entity.Entity), With: obj2.(*entity.Entity)})
+				c.NotifyEvent(&CollisionEvent{Ent: obj, With: obj2})
 			}
 		}
 	}

@@ -8,30 +8,26 @@ import (
 
 // RenderSystem is probably one of the most important system. It is responsible to render (draw) the entities
 type RenderSystem struct {
-	Entities    []entity.Entitier
-	Renderer    *sdl.Renderer
-	BgColor     sdl.Color
-	Camera      entity.Entitier // entity that have the camera component
-	accumulator uint32          // used for interpolation
-	time        uint32          // used for animation
-	Name        string
+	EntityManager *entity.Manager
+	Window        *sdl.Window
+	Renderer      *sdl.Renderer
+	BgColor       sdl.Color
+	Camera        entity.Entitier // entity that have the camera component
+	accumulator   uint32          // used for interpolation
+	time          uint32          // used for animation
+	Name          string
 }
 
 // Init initializes the render system using the current window
-func (r *RenderSystem) Init(window *sdl.Window) {
+func (r *RenderSystem) Init() {
 	var err error
-	if r.Renderer, err = sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED); err != nil {
+	if r.Renderer, err = sdl.CreateRenderer(r.Window, -1, sdl.RENDERER_ACCELERATED); err != nil {
 		logFatalf("Renderer could not be created! SDL Error: %s\n", sdl.GetError())
 	} else {
 		//Initialize renderer color
 		r.BgColor = sdl.Color{0xFF, 0xFF, 0xFF, 0xFF}
 		r.Renderer.SetDrawColor(0xFF, 0xFF, 0xFF, 0xFF)
 	}
-}
-
-// Assign assign entities with this system
-func (r *RenderSystem) Assign(entities []entity.Entitier) {
-	r.Entities = entities
 }
 
 // UpdateAccumulator update the accumulator time.
@@ -99,7 +95,7 @@ func (r *RenderSystem) Update() {
 	// interpolation variable
 	alpha := float32(r.accumulator) / UpdateTickLength
 
-	for _, obj := range r.Entities {
+	for _, obj := range r.EntityManager.GetAll() {
 		// Position component
 		components := obj.GetComponents()
 		component, ok = components["position"]

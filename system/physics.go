@@ -8,22 +8,20 @@ import (
 
 // PhysicsSystem is responsible to update the physics in the game.
 type PhysicsSystem struct {
-	Entities []entity.Entitier
-	Name     string
+	EntityManager *entity.Manager
+	Name          string
 	Subject
 }
 
-// Assign assign entities with this system
-func (p *PhysicsSystem) Assign(entities []entity.Entitier) {
-	p.Entities = entities
-}
+// Init initializes this system. So far it does nothing.
+func (p *PhysicsSystem) Init() {}
 
 // Update change the position and velocity accordingly. We are using Semi-implicit Euler
 func (p *PhysicsSystem) Update() {
 	var ok bool
 	var component interface{}
 
-	for _, obj := range p.Entities {
+	for _, obj := range p.EntityManager.GetAll() {
 		components := obj.GetComponents()
 		component, ok = components["physics"]
 		if !ok {
