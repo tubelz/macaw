@@ -1,13 +1,10 @@
 package entity
 
 import (
-	"github.com/tubelz/macaw/internal/utils"
 	"testing"
 )
 
 func TestManager_CreateIncreaseID(t *testing.T) {
-	utils.SetupLog(t)
-
 	m := &Manager{}
 	entity1 := m.Create()
 	entity2 := m.Create()
@@ -15,13 +12,9 @@ func TestManager_CreateIncreaseID(t *testing.T) {
 	if entity2.GetID() < entity1.GetID() {
 		t.Errorf("Auto increment of entity manager not working. ID_1: %d, ID_2: %d", entity1.GetID(), entity2.GetID())
 	}
-
-	utils.TeardownLog()
 }
 
 func TestManager_Get(t *testing.T) {
-	utils.SetupLog(t)
-
 	m := &Manager{}
 	_ = m.Create()
 	_ = m.Create()
@@ -32,13 +25,9 @@ func TestManager_Get(t *testing.T) {
 	if m.Get(2) != nil {
 		t.Error("Get(n) should return nil if N is greater than len(entities)")
 	}
-
-	utils.TeardownLog()
 }
 
 func TestManager_IterAvailable(t *testing.T) {
-	utils.SetupLog(t)
-
 	m := &Manager{}
 	_ = m.Create()
 	_ = m.Create()
@@ -61,13 +50,9 @@ func TestManager_IterAvailable(t *testing.T) {
 	if _, ok := it(); ok {
 		t.Error("Expecting iterator to end")
 	}
-
-	utils.TeardownLog()
 }
 
 func TestManager_Delete(t *testing.T) {
-	utils.SetupLog(t)
-
 	m := &Manager{}
 	_ = m.Create()
 	_ = m.Create()
@@ -88,13 +73,9 @@ func TestManager_Delete(t *testing.T) {
 	if ok := m.Delete(1); ok {
 		t.Error("Delete() removing element that doesn't exist")
 	}
-
-	utils.TeardownLog()
 }
 
 func TestManager_ReuseSlot(t *testing.T) {
-	utils.SetupLog(t)
-
 	m := &Manager{}
 	_ = m.Create()
 	entity2 := m.Create()
@@ -104,6 +85,4 @@ func TestManager_ReuseSlot(t *testing.T) {
 	if entity2.GetID() < entity1.GetID() {
 		t.Errorf("Reuse slot not working. ID_1: %d, ID_2: %d", entity1.GetID(), entity2.GetID())
 	}
-
-	utils.TeardownLog()
 }
