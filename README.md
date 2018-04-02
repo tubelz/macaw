@@ -39,8 +39,7 @@ If there is a bug you can open an issue here.
 ## Development
 There are many features to be developed and improve current functionalities. In the queue:
 
-* Entity and System manager
-* Tests
+* Add more tests
 * GUI
 
 ## License
