@@ -109,6 +109,20 @@ func (m *Manager) GetAll() []*Entity {
 	return m.entities
 }
 
+// IterAvailable creates an iterator for the available entities
+func (m *Manager) IterAvailable() func() (*Entity, bool) {
+	i := -1
+	entitySize := len(m.entities)
+	return func() (*Entity, bool) {
+		for i++; i < entitySize; i++ {
+			if m.entities[i] != nil {
+				return m.entities[i], true
+			}
+		}
+		return nil, false
+	}
+}
+
 /////////////////////////////////////////////////
 /// ... Basic Components ...
 /////////////////////////////////////////////////

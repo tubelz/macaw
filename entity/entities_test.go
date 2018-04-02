@@ -36,6 +36,35 @@ func TestManager_Get(t *testing.T) {
 	utils.TeardownLog()
 }
 
+func TestManager_IterAvailable(t *testing.T) {
+	utils.SetupLog(t)
+
+	m := &Manager{}
+	_ = m.Create()
+	_ = m.Create()
+	_ = m.Create()
+	// Delete object with ID 1 so we expect to return objects with ID 0 and 2
+	m.Delete(1)
+	it := m.IterAvailable()
+	if obj, ok := it(); !ok {
+		t.Error("Expecting true, returned false")
+	} else if obj.GetID() != 0 {
+		t.Error("First object in test should have id 0")
+	}
+
+	if obj, ok := it(); !ok {
+		t.Error("Expecting true, returned false")
+	} else if obj.GetID() != 2 {
+		t.Error("Second object in test should have id 2")
+	}
+
+	if _, ok := it(); ok {
+		t.Error("Expecting iterator to end")
+	}
+
+	utils.TeardownLog()
+}
+
 func TestManager_Delete(t *testing.T) {
 	utils.SetupLog(t)
 

@@ -21,7 +21,8 @@ func (p *PhysicsSystem) Update() {
 	var ok bool
 	var component interface{}
 
-	for _, obj := range p.EntityManager.GetAll() {
+	it := p.EntityManager.IterAvailable()
+	for obj, itok := it(); itok; obj, itok = it() {
 		components := obj.GetComponents()
 		component, ok = components["physics"]
 		if !ok {

@@ -95,7 +95,8 @@ func (r *RenderSystem) Update() {
 	// interpolation variable
 	alpha := float32(r.accumulator) / UpdateTickLength
 
-	for _, obj := range r.EntityManager.GetAll() {
+	it := r.EntityManager.IterAvailable()
+	for obj, itok := it(); itok; obj, itok = it() {
 		// Position component
 		components := obj.GetComponents()
 		component, ok = components["position"]

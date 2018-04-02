@@ -22,7 +22,8 @@ func (c *CollisionSystem) Update() {
 	var component interface{}
 	var ok bool
 
-	for _, obj := range c.EntityManager.GetAll() {
+	it := c.EntityManager.IterAvailable()
+	for obj, itok := it(); itok; obj, itok = it() {
 		if component, ok = obj.GetComponent("position"); !ok {
 			continue
 		}
@@ -36,11 +37,11 @@ func (c *CollisionSystem) Update() {
 		c.checkBorderCollision(obj, position, collision)
 
 		// check collision with other entities
-		for _, obj2 := range c.EntityManager.GetAll() {
+		it2 := c.EntityManager.IterAvailable()
+		for obj2, itok2 := it2(); itok2; obj2, itok2 = it2() {
 			if obj == obj2 {
 				continue
 			}
-
 			if component, ok = obj2.GetComponent("position"); !ok {
 				continue
 			}
