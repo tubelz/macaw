@@ -52,6 +52,39 @@ func TestManager_IterAvailable(t *testing.T) {
 	}
 }
 
+func TestManager_IterAvailable_NoItem(t *testing.T) {
+	m := &Manager{}
+
+	it := m.IterAvailable()
+	if _, ok := it(); ok {
+		t.Errorf("IterAvailable should not return true for empty items")
+	}
+}
+
+func TestManager_TwoIterAvailable(t *testing.T) {
+	m := &Manager{}
+	_ = m.Create()
+	_ = m.Create()
+	_ = m.Create()
+	// Delete object with ID 1 so we expect to return objects with ID 0 and 2
+	m.Delete(1)
+	it1 := m.IterAvailable()
+	it2 := m.IterAvailable()
+
+	obj1, _ := it1()
+	obj2, _ := it2()
+	if obj1.GetID() != obj2.GetID() {
+		t.Errorf(`IterAvailable getting different objects when it should get the
+			same object Expecting 0 == 0 got %d == %d`, obj1.GetID(), obj2.GetID())
+	}
+	obj1, _ = it1()
+	obj2, _ = it2()
+	if obj1.GetID() != obj2.GetID() {
+		t.Errorf(`IterAvailable getting different objects when it should get the
+			same object. Expecting 0 == 0 got %d == %d`, obj1.GetID(), obj2.GetID())
+	}
+}
+
 func TestManager_Delete(t *testing.T) {
 	m := &Manager{}
 	_ = m.Create()
