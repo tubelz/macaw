@@ -51,13 +51,30 @@ func (c *CollisionSystem) Update() {
 			}
 
 			collision2 := component.(*entity.CollisionComponent)
-			rect1 := &sdl.Rect{position.Pos.X, position.Pos.Y, collision.Size.X, collision.Size.Y}
-			rect2 := &sdl.Rect{position2.Pos.X, position2.Pos.Y, collision2.Size.X, collision2.Size.Y}
-			if rect1.HasIntersection(rect2) {
+
+			if c.checkCollisionBetweenAreas(position, collision, position2, collision2) {
 				c.NotifyEvent(&CollisionEvent{Ent: obj, With: obj2})
 			}
 		}
 	}
+}
+
+func (c *CollisionSystem) checkCollisionBetweenAreas(pos1 *entity.PositionComponent,
+	col1 *entity.CollisionComponent,
+	pos2 *entity.PositionComponent,
+	col2 *entity.CollisionComponent) bool {
+	var rect1, rect2 *sdl.Rect
+	for _, area1 := range col1.CollisionAreas {
+		rect1 = &sdl.Rect{pos1.Pos.X + area1.X, pos1.Pos.Y + area1.Y, area1.W, area1.H}
+		for _, area2 := range col2.CollisionAreas {
+			rect2 = &sdl.Rect{pos2.Pos.X + area2.X, pos2.Pos.Y + area2.Y, area2.W, area2.H}
+			if rect1.HasIntersection(rect2) {
+				return true
+			}
+		}
+	}
+
+	return false
 }
 
 // BorderEvent has the entity (Ent) that transpassed the border and which border
@@ -74,21 +91,23 @@ func (b *BorderEvent) Name() string {
 func (c *CollisionSystem) checkBorderCollision(obj *entity.Entity,
 	position *entity.PositionComponent,
 	collision *entity.CollisionComponent) {
-	// check each side. top and left don't require collision size
-	if position.Pos.X+collision.Size.X > 799 {
-		log.Printf("pos %v", position.Pos)
-		c.NotifyEvent(&BorderEvent{Ent: obj, Side: "right"})
-	} else if position.Pos.X < 1 {
-		log.Printf("pos %v", position.Pos)
-		c.NotifyEvent(&BorderEvent{Ent: obj, Side: "left"})
-	}
+	for _, area := range collision.CollisionAreas {
+		// check each side. top and left don't require collision size
+		if position.Pos.X+area.W > 799 {
+			log.Printf("pos %v", position.Pos)
+			c.NotifyEvent(&BorderEvent{Ent: obj, Side: "right"})
+		} else if position.Pos.X < 1 {
+			log.Printf("pos %v", position.Pos)
+			c.NotifyEvent(&BorderEvent{Ent: obj, Side: "left"})
+		}
 
-	if position.Pos.Y < 1 {
-		log.Printf("pos %v", position.Pos)
-		c.NotifyEvent(&BorderEvent{Ent: obj, Side: "top"})
-	} else if position.Pos.Y+collision.Size.Y > 599 {
-		log.Printf("pos %v", position.Pos)
-		c.NotifyEvent(&BorderEvent{Ent: obj, Side: "bottom"})
+		if position.Pos.Y < 1 {
+			log.Printf("pos %v", position.Pos)
+			c.NotifyEvent(&BorderEvent{Ent: obj, Side: "top"})
+		} else if position.Pos.Y+area.H > 599 {
+			log.Printf("pos %v", position.Pos)
+			c.NotifyEvent(&BorderEvent{Ent: obj, Side: "bottom"})
+		}
 	}
 }
 
@@ -168,17 +187,23 @@ func InvertVel(event Event) {
 // intersection get the intersection rectangle between two objects
 func intersection(obj1, obj2 *entity.Entity) sdl.Rect {
 	c, _ := obj1.GetComponent("position")
-	position := c.(*entity.PositionComponent)
+	position1 := c.(*entity.PositionComponent)
 	c, _ = obj2.GetComponent("position")
 	position2 := c.(*entity.PositionComponent)
 	c, _ = obj1.GetComponent("collision")
-	collision := c.(*entity.CollisionComponent)
+	collision1 := c.(*entity.CollisionComponent)
 	c, _ = obj2.GetComponent("collision")
 	collision2 := c.(*entity.CollisionComponent)
 
-	rect1 := &sdl.Rect{position.Pos.X, position.Pos.Y, collision.Size.X, collision.Size.Y}
-	rect2 := &sdl.Rect{position2.Pos.X, position2.Pos.Y, collision2.Size.X, collision2.Size.Y}
+	for _, area1 := range collision1.CollisionAreas {
+		rect1 := &sdl.Rect{position1.Pos.X + area1.X, position1.Pos.Y + area1.Y, area1.W, area1.H}
+		for _, area2 := range collision2.CollisionAreas {
+			rect2 := &sdl.Rect{position2.Pos.X + area2.X, position2.Pos.Y + area2.Y, area2.W, area2.H}
+			if displacement, ok := rect1.Intersect(rect2); ok {
+				return displacement
+			}
+		}
+	}
 
-	displacement, _ := rect1.Intersect(rect2)
-	return displacement
+	return sdl.Rect{0, 0, 0, 0}
 }

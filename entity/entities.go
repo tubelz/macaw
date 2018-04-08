@@ -188,7 +188,7 @@ type RectangleComponent struct {
 // CollisionComponent makes the entity notify if it hits something else
 // TODO: Add other type of information such as Shape, Density, Friction etc...
 type CollisionComponent struct {
-	// Size is duplicating data a little bit... we have this information
-	// in the render and geometry component, but we will use this attribute for now
-	Size *sdl.Point
+	// CollisionAreas contains the rectangles that will be checked.
+	// The position is relative to the upper left corner of the renderer
+	CollisionAreas []sdl.Rect
 }
