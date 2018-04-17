@@ -5,7 +5,6 @@ Macaw is written in Go with the [ECS architecture pattern](https://en.wikipedia.
 
 Still under development and many improvements to be done.
 
-
 ![Demo](https://github.com/tubelz/pong-macaw/blob/master/pong.gif)
 
 ## Installation and requirements
@@ -39,7 +38,6 @@ If there is a bug you can open an issue here.
 ## Development
 There are many features to be developed and improve current functionalities. In the queue:
 
-* Add more tests
 * GUI
 
 ## License
