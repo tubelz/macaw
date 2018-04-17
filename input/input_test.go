@@ -32,7 +32,7 @@ func TestManager_HandleEventsMultiple(t *testing.T) {
 	sdl.PushEvent(buttonDownReleased)
 	m.HandleEvents()
 	if len(m.button) != 3 {
-		t.Error("Expecting 3 buttons in event queue, got %d", len(m.button))
+		t.Errorf("Expecting 3 buttons in event queue, got %d", len(m.button))
 	} else if m.button[0] != *buttonDownPressed {
 		t.Errorf("Expecting queue event to be %v, got %v", buttonDownPressed, m.button[0])
 	} else if m.button[2] != *buttonDownReleased {
