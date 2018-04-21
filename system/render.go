@@ -97,8 +97,14 @@ func (r *RenderSystem) Update() {
 
 	it := r.EntityManager.IterAvailable()
 	for obj, itok := it(); itok; obj, itok = it() {
-		// Position component
 		components := obj.GetComponents()
+		// Grid component
+		if component, ok = components["grid"]; ok {
+			grid := component.(*entity.GridComponent)
+			r.drawGrid(grid)
+			continue
+		}
+		// Position component
 		component, ok = components["position"]
 		if !ok {
 			continue
@@ -257,4 +263,26 @@ func nextAnimation(now uint32, anim *entity.AnimationComponent, currentRect *sdl
 	x := int32(xMultiplier)*currentRect.W + anim.InitialPos.X
 	y := int32(yMultiplier)*currentRect.H + anim.InitialPos.Y
 	return &sdl.Rect{x, y, currentRect.W, currentRect.H}
+}
+
+// drawGrid is used to draw a grid to help debugging
+func (r *RenderSystem) drawGrid(grid *entity.GridComponent) {
+	render := r.Renderer
+	var area sdl.Point
+	area.X, area.Y = r.Window.GetSize()
+
+	if grid.Color != nil {
+		render.SetDrawColor(grid.Color.R, grid.Color.G, grid.Color.B, grid.Color.A)
+	} else {
+		render.SetDrawColor(0x0, 0x0, 0x0, 0xFF)
+	}
+
+	xIterations := area.X / grid.Size.X
+	yIterations := area.Y / grid.Size.Y
+	for i := int32(0); i < xIterations; i++ {
+		for j := int32(0); j < yIterations; j++ {
+			rect := &sdl.Rect{i * grid.Size.X, j * grid.Size.Y, grid.Size.X, grid.Size.Y}
+			render.DrawRect(rect)
+		}
+	}
 }

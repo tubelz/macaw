@@ -192,3 +192,9 @@ type CollisionComponent struct {
 	// The position is relative to the upper left corner of the renderer
 	CollisionAreas []sdl.Rect
 }
+
+// GridComponent is used for debugging
+type GridComponent struct {
+	Size  *sdl.Point
+	Color *sdl.Color
+}
