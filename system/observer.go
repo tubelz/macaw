@@ -1,7 +1,5 @@
 package system
 
-import "log"
-
 /*
  This is the implementation of the Observer Pattern so we can
  track events and execute functions we are interested on for
@@ -38,8 +36,6 @@ func (s *Subject) RemHandler() {
 // NotifyEvent executes all event handlers for a specific event
 func (s *Subject) NotifyEvent(event Event) {
 	handlers := s.listeners[event.Name()]
-	log.Printf("listeners: %d\n", len(s.listeners))
-	log.Printf("notifying... %v\n", event.Name())
 	for _, handler := range handlers {
 		handler(event)
 	}
