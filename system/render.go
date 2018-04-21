@@ -127,7 +127,7 @@ func (r *RenderSystem) Update() {
 		// Geometry component
 		component, ok = components["geometry"]
 		if ok {
-			r.drawGeometry(r.Renderer, position, component)
+			r.drawGeometry(position, component)
 			continue
 		}
 
@@ -209,7 +209,8 @@ func generateTextureFromFont(render *entity.RenderComponent, font *entity.FontCo
 }
 
 // drawGeometry draws on the renderer the geometry. We don't use texture, because it's faster to draw directly using the renderer
-func (r *RenderSystem) drawGeometry(render *sdl.Renderer, pos *entity.PositionComponent, geometryComponent interface{}) {
+func (r *RenderSystem) drawGeometry(pos *entity.PositionComponent, geometryComponent interface{}) {
+	render := r.Renderer
 	switch g := geometryComponent.(type) {
 	case *entity.RectangleComponent:
 		render.SetDrawColor(g.Color.R, g.Color.G, g.Color.B, g.Color.A)
