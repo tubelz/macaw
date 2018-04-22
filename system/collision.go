@@ -94,18 +94,14 @@ func (c *CollisionSystem) checkBorderCollision(obj *entity.Entity,
 	for _, area := range collision.CollisionAreas {
 		// check each side. top and left don't require collision size
 		if position.Pos.X+area.W > 799 {
-			log.Printf("pos %v", position.Pos)
 			c.NotifyEvent(&BorderEvent{Ent: obj, Side: "right"})
 		} else if position.Pos.X < 1 {
-			log.Printf("pos %v", position.Pos)
 			c.NotifyEvent(&BorderEvent{Ent: obj, Side: "left"})
 		}
 
 		if position.Pos.Y < 1 {
-			log.Printf("pos %v", position.Pos)
 			c.NotifyEvent(&BorderEvent{Ent: obj, Side: "top"})
 		} else if position.Pos.Y+area.H > 599 {
-			log.Printf("pos %v", position.Pos)
 			c.NotifyEvent(&BorderEvent{Ent: obj, Side: "bottom"})
 		}
 	}
