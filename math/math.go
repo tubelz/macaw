@@ -49,10 +49,18 @@ func MulPointWithInt(a *sdl.Point, b int32) *sdl.Point {
 	return &sdl.Point{a.X * b, a.Y * b}
 }
 
-// Round the float point to int
+// Round rounds the float point to int
 func Round(num float32) int32 {
 	if num < 0 {
 		return int32(num - 0.5)
 	}
 	return int32(num + 0.5)
+}
+
+// Round64 rounds the float point to int
+func Round64(num float64) int64 {
+	if num < 0 {
+		return int64(num - 0.5)
+	}
+	return int64(num + 0.5)
 }
