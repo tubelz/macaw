@@ -6,18 +6,31 @@ import (
 
 func TestManager_CreateIncreaseID(t *testing.T) {
 	m := &Manager{}
-	entity1 := m.Create()
-	entity2 := m.Create()
+	entity1 := m.Create("")
+	entity2 := m.Create("")
 
 	if entity2.GetID() < entity1.GetID() {
 		t.Errorf("Auto increment of entity manager not working. ID_1: %d, ID_2: %d", entity1.GetID(), entity2.GetID())
 	}
 }
 
+func TestManager_GetType(t *testing.T) {
+	m := &Manager{}
+	entity1 := m.Create("type1")
+	entity2 := m.Create("type2")
+
+	if entity1.GetType() != "type1" {
+		t.Errorf("GetType() returning %s. Should return type1", entity1.GetType())
+	}
+	if entity2.GetType() != "type2" {
+		t.Errorf("GetType() returning %s. Should return type2", entity2.GetType())
+	}
+}
+
 func TestManager_Get(t *testing.T) {
 	m := &Manager{}
-	_ = m.Create()
-	_ = m.Create()
+	_ = m.Create("")
+	_ = m.Create("")
 
 	if m.Get(1).GetID() < m.Get(0).GetID() {
 		t.Error("Get() getting wrong entity")
@@ -29,9 +42,9 @@ func TestManager_Get(t *testing.T) {
 
 func TestManager_IterAvailable(t *testing.T) {
 	m := &Manager{}
-	_ = m.Create()
-	_ = m.Create()
-	_ = m.Create()
+	_ = m.Create("")
+	_ = m.Create("")
+	_ = m.Create("")
 	// Delete object with ID 1 so we expect to return objects with ID 0 and 2
 	m.Delete(1)
 	it := m.IterAvailable()
@@ -63,9 +76,9 @@ func TestManager_IterAvailable_NoItem(t *testing.T) {
 
 func TestManager_TwoIterAvailable(t *testing.T) {
 	m := &Manager{}
-	_ = m.Create()
-	_ = m.Create()
-	_ = m.Create()
+	_ = m.Create("")
+	_ = m.Create("")
+	_ = m.Create("")
 	// Delete object with ID 1 so we expect to return objects with ID 0 and 2
 	m.Delete(1)
 	it1 := m.IterAvailable()
@@ -87,8 +100,8 @@ func TestManager_TwoIterAvailable(t *testing.T) {
 
 func TestManager_Delete(t *testing.T) {
 	m := &Manager{}
-	_ = m.Create()
-	_ = m.Create()
+	_ = m.Create("")
+	_ = m.Create("")
 
 	if ok := m.Delete(1); !ok {
 		t.Error("Delete() not removing element")
@@ -110,10 +123,10 @@ func TestManager_Delete(t *testing.T) {
 
 func TestManager_ReuseSlot(t *testing.T) {
 	m := &Manager{}
-	_ = m.Create()
-	entity2 := m.Create()
+	_ = m.Create("")
+	entity2 := m.Create("")
 	m.Delete(0)
-	entity1 := m.Create()
+	entity1 := m.Create("")
 
 	if entity2.GetID() < entity1.GetID() {
 		t.Errorf("Reuse slot not working. ID_1: %d, ID_2: %d", entity1.GetID(), entity2.GetID())

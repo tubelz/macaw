@@ -20,14 +20,19 @@ type Entitier interface {
 
 // Entity is the struct that contains the components. Right now the id's are not being used
 type Entity struct {
-	// components
 	id         uint16
+	etype      string // type of the entity
 	components map[string]Component
 }
 
-// GetID the id of the entity
+// GetID returns the id of the entity
 func (e *Entity) GetID() uint16 {
 	return e.id
+}
+
+// GetType returns the type of the entity
+func (e *Entity) GetType() string {
+	return e.etype
 }
 
 // GetComponents returns a list of all the components of the entity
@@ -60,9 +65,10 @@ type Manager struct {
 }
 
 // Create creates a new entity and returns it
-func (m *Manager) Create() *Entity {
+func (m *Manager) Create(etype string) *Entity {
 	var i uint16
 	entity := new(Entity)
+	entity.etype = etype
 
 	// check if we can use an empty slot of our array, or if we have to add a new position
 	if len(m.availableSlots) > 0 {
