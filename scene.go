@@ -42,8 +42,11 @@ func (s *SceneManager) RemoveScene() {
 
 // NextScene goes to the next scene if it exists
 func (s *SceneManager) NextScene() *Scene {
+	(s.Current()).Exit()
 	if s.currentPos < (len(s.Scenes) - 1) {
 		s.currentPos++
+	} else {
+		s.currentPos = 0
 	}
 	s.Current().Init()
 	return s.Current()
@@ -52,6 +55,7 @@ func (s *SceneManager) NextScene() *Scene {
 // ChangeScene changes to a specific scene by its name
 func (s *SceneManager) ChangeScene(sceneName string) *Scene {
 	if pos, ok := s.SceneMap[sceneName]; ok {
+		(s.Current()).Exit()
 		s.currentPos = pos
 	}
 	s.Current().Init()
@@ -63,11 +67,16 @@ type Scene struct {
 	Name          string
 	UpdateSystems []system.Systemer    // responsible to update the game
 	RenderSystem  *system.RenderSystem // responsible to render the game
+	InitFunc      func()
+	ExitFunc      func()
 	SceneOptions
 }
 
 // Init initializes the scene according to the options
 func (s *Scene) Init() {
+	if s.InitFunc != nil {
+		s.InitFunc()
+	}
 	// HideCursor option
 	s.showCursor()
 	// Music option
@@ -77,6 +86,17 @@ func (s *Scene) Init() {
 		s.RenderSystem.BgColor = s.BgColor
 	} else {
 		s.RenderSystem.BgColor = sdl.Color{0xFF, 0xFF, 0xFF, 0xFF}
+	}
+	// Run Init for each system in the scene
+	for _, system := range s.UpdateSystems {
+		system.Init()
+	}
+}
+
+// Exit executes a function, if setted, when scene is excited
+func (s *Scene) Exit() {
+	if s.ExitFunc != nil {
+		s.ExitFunc()
 	}
 }
 
