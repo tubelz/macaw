@@ -18,12 +18,31 @@ func TestGameLoop_Run(t *testing.T) {
 	em := &entity.Manager{}
 	sceneGame := &Scene{Name: "game"}
 	sceneGame.AddRenderSystem(&system.RenderSystem{Camera: &entity.Entity{}, EntityManager: em})
+	// Initialize the mocked systems to test whether systems are executed in sequence work or not
+	var val int
+	mockFunc1 := func() {
+		if val != 0 {
+			t.Errorf("Got %d; want 0", val)
+		}
+		val++
+	}
+	mockFunc2 := func() {
+		if val != 1 {
+			t.Errorf("Got %d; want 1", val)
+		}
+		val++
+	}
+	mockSystem1 := &utils.MockSystem{MockFunc: mockFunc1}
+	mockSystem2 := &utils.MockSystem{MockFunc: mockFunc2}
+	sceneGame.AddGameUpdateSystem(mockSystem1)
+	sceneGame.AddGameUpdateSystem(mockSystem2)
 	gameLoop := &GameLoop{InputManager: input}
 	gameLoop.AddScene(sceneGame)
+
 	// close game after 100 milliseconds
 	go func() {
 		duration := time.Millisecond
-		time.Sleep(duration * 100)
+		time.Sleep(duration)
 		quitEvent := &sdl.QuitEvent{Type: sdl.QUIT, Timestamp: sdl.GetTicks()}
 		sdl.PushEvent(quitEvent)
 	}()
