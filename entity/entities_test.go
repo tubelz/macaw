@@ -123,12 +123,64 @@ func TestManager_Delete(t *testing.T) {
 
 func TestManager_ReuseSlot(t *testing.T) {
 	m := &Manager{}
-	_ = m.Create("")
-	entity2 := m.Create("")
+	_ = m.Create("")        // 0
+	entity1 := m.Create("") // 1
 	m.Delete(0)
-	entity1 := m.Create("")
+	entity0 := m.Create("") // 0
 
-	if entity2.GetID() < entity1.GetID() {
-		t.Errorf("Reuse slot not working. ID_1: %d, ID_2: %d", entity1.GetID(), entity2.GetID())
+	// simple check
+	if entity1.GetID() < entity0.GetID() {
+		t.Errorf("Reuse slot not working. ID_1: %d, ID_0: %d", entity1.GetID(), entity0.GetID())
+	}
+	// check if it the sequencing keeps working
+	entity2 := m.Create("")
+	if entity2.GetID() != 2 {
+		t.Errorf("Not using right slot. ID_2: %d; want 2", entity2.GetID())
+	}
+
+	// check if the reuse works on the middle as well
+	for i := uint16(0); i < 3; i++ {
+		m.Delete(i)
+	}
+	_ = m.Create("")
+	m.Delete(0)
+	entity0 = m.Create("")
+	if entity0.GetID() != 0 {
+		t.Errorf("Reuse slot not working. ID_0: %d; want 0", entity0.GetID())
+	}
+}
+
+func TestBinarySearchInsert(t *testing.T) {
+	size := func(arr []uint16) int {
+		return len(arr) - 1
+	}
+	cases := []struct {
+		inArray []uint16
+		inVal   uint16
+		want    int
+	}{
+		{[]uint16{0}, 1, 1},
+		{[]uint16{1}, 0, 0},
+		{[]uint16{1}, 1, 0},
+		{[]uint16{1, 5, 6, 7, 8, 9}, 10, 6},
+		{[]uint16{1, 5, 6, 7, 8, 9}, 2, 1},
+		{[]uint16{1, 5, 6, 7, 8, 9}, 4, 1},
+		{[]uint16{1, 5, 6, 7, 8, 9}, 0, 0},
+	}
+	for _, c := range cases {
+		got := binarySearch(c.inArray, 0, size(c.inArray), c.inVal)
+		if got != c.want {
+			t.Errorf("binarySearchInsert(%v, 0, %d, %d) == %d; want %d", c.inArray, size(c.inArray), c.inVal, got, c.want)
+		}
+	}
+}
+
+func BenchmarkBinSearchInsert(b *testing.B) {
+	// run the Fib function b.N times
+	arr := []uint16{1, 5, 6, 7, 8, 9}
+	size := len(arr) - 1
+	val := uint16(10)
+	for n := 0; n < b.N; n++ {
+		binarySearch(arr, 0, size, val)
 	}
 }

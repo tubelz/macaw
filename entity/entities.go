@@ -87,6 +87,24 @@ func (m *Manager) Create(etype string) *Entity {
 	return entity
 }
 
+// binarySearch returns the index where either the index of the element that we found,
+// or where we should insert the new element that doesn't exist
+func binarySearch(arr []uint16, low int, high int, val uint16) int {
+	var mid int
+	for low <= high {
+		mid = (low + high) >> 1
+		if arr[mid] <= val {
+			low = mid + 1
+		} else {
+			high = mid - 1
+		}
+	}
+	if arr[mid] < val {
+		return mid + 1
+	}
+	return mid
+}
+
 // Delete removes an entity associated to the given id
 func (m *Manager) Delete(id uint16) bool {
 	if m.entities[id] == nil {
@@ -95,9 +113,19 @@ func (m *Manager) Delete(id uint16) bool {
 	var entity *Entity
 	entity = nil
 	m.entities[id] = entity
-
-	m.availableSlots = append(m.availableSlots, id)
-
+	// insert element at i
+	arrSize := len(m.availableSlots) - 1
+	if arrSize < 1 {
+		m.availableSlots = append(m.availableSlots, id)
+	} else {
+		i := binarySearch(m.availableSlots, 0, arrSize, id)
+		// first we we make sure the array has enough capacity
+		m.availableSlots = append(m.availableSlots, 0)
+		// shift existing elements (thus, overwrite our 0 that we just inserted)
+		copy(m.availableSlots[i+1:], m.availableSlots[i:])
+		// set our element to the proper index
+		m.availableSlots[i] = id
+	}
 	return true
 }
 
