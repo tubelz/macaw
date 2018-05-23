@@ -33,6 +33,11 @@ func (s *Subject) RemHandler() {
 	//TODO
 }
 
+// ClearEvents clear all events
+func (s *Subject) ClearEvents() {
+	s.listeners = nil
+}
+
 // NotifyEvent executes all event handlers for a specific event
 func (s *Subject) NotifyEvent(event Event) {
 	handlers := s.listeners[event.Name()]
