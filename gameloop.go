@@ -53,7 +53,7 @@ func (g *GameLoop) Run() {
 	for running := true; running; {
 		running = g.InputManager.HandleEvents()
 		g.now = sdl.GetTicks()
-		for loops := 0; g.now >= g.nextTick; loops++ {
+		for g.now >= g.nextTick {
 			g.gameUpdate()
 			g.nextTick += system.UpdateTickLength
 		}
