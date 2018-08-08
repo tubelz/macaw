@@ -1,3 +1,4 @@
+// Package utils contains some internal tools we use in macaw.
 package utils
 
 import (

@@ -1,3 +1,6 @@
+// Package system provides the interface used in the game engine, messaging between systems,
+// and some built in systems.
+// List of built-in systems: collision, physics, render
 package system
 
 import (

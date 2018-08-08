@@ -1,3 +1,4 @@
+// Package input provides a wrapper to handle user input events (keyboard and mouse for now).
 package input
 
 import (

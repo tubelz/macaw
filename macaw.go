@@ -1,3 +1,5 @@
+// Package macaw provides some of the core concepts required by the game engine Macaw.
+// To create our games we are still require to use other internal packages: entity, system, and input.
 package macaw
 
 import (
