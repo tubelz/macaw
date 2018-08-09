@@ -30,7 +30,9 @@ func TestGameLoop_Run(t *testing.T) {
 		if val != 1 {
 			t.Errorf("Got %d; want 1", val)
 		}
-		val++
+		// add big delay to avoid the systems to be ran again
+		duration := time.Millisecond * 10
+		time.Sleep(duration)
 	}
 	mockSystem1 := &utils.MockSystem{MockFunc: mockFunc1}
 	mockSystem2 := &utils.MockSystem{MockFunc: mockFunc2}
