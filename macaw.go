@@ -1,12 +1,13 @@
 package macaw
 
 import (
+	"log"
+
 	"github.com/tubelz/macaw/internal/utils"
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/mix"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
-	"log"
 )
 
 const (
@@ -25,7 +26,7 @@ var (
 )
 
 // Initialize SDL
-func Initialize(image, font, sound bool) error {
+func Initialize() error {
 	var window *sdl.Window
 	var err error
 	// flags available:
@@ -44,32 +45,26 @@ func Initialize(image, font, sound bool) error {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// load support for the JPG and PNG image formats
-	if image {
-		imgFlags := img.INIT_JPG | img.INIT_PNG
-		if err := img.Init(imgFlags); err != imgFlags {
-			utils.LogFatalf("Failed to initialize IMG: %d (%s)\n", err, img.GetError())
-		}
+	imgFlags := img.INIT_JPG | img.INIT_PNG
+	if err := img.Init(imgFlags); err != imgFlags {
+		utils.LogFatalf("Failed to initialize IMG: %d (%s)\n", err, img.GetError())
 	}
 
 	// load ttf support
-	if font {
-		if err := ttf.Init(); err != nil {
-			utils.LogFatalf("Failed to initialize TTF: %s\n", err)
-		}
+	if err := ttf.Init(); err != nil {
+		utils.LogFatalf("Failed to initialize TTF: %s\n", err)
 	}
 
 	// load sound support
-	if sound {
-		if err := sdl.Init(sdl.INIT_AUDIO); err != nil {
-			utils.LogFatalf("Failed to initialize MIX: %s\n", err)
-		}
-		soundFlags := mix.INIT_FLAC | mix.INIT_OGG
-		if err := mix.Init(soundFlags); err != nil {
-			log.Println(err)
-		}
-		if err := mix.OpenAudio(22050, mix.DEFAULT_FORMAT, 2, 4096); err != nil {
-			log.Println(err)
-		}
+	if err := sdl.Init(sdl.INIT_AUDIO); err != nil {
+		utils.LogFatalf("Failed to initialize MIX: %s\n", err)
+	}
+	soundFlags := mix.INIT_FLAC | mix.INIT_OGG
+	if err := mix.Init(soundFlags); err != nil {
+		log.Println(err)
+	}
+	if err := mix.OpenAudio(22050, mix.DEFAULT_FORMAT, 2, 4096); err != nil {
+		log.Println(err)
 	}
 
 	// we are only creating one window for now, so Window will be a global
@@ -83,16 +78,27 @@ func Initialize(image, font, sound bool) error {
 	return err
 }
 
-// Quit cleans up all initialized subsystems
-func Quit() {
-	// Close SDL packages
+// QuitImg unloads libraries loaded with img.Init()
+func QuitImg() {
 	img.Quit()
-	ttf.Quit()
+}
+
+// QuitSound close open files and unloads libraries loaded with mix.Init()
+func QuitSound() {
 	for _, _, _, open, err := mix.QuerySpec(); err == nil && open > 0; _, _, _, open, err = mix.QuerySpec() {
 		log.Println("closing")
 		mix.CloseAudio()
 	}
 	mix.Quit()
+}
+
+// QuitFont unloads libraries loaded with ttf.Init()
+func QuitFont() {
+	ttf.Quit()
+}
+
+// Quit cleans up all initialized subsystems
+func Quit() {
 	// Close SDL
 	sdl.Quit()
 }
