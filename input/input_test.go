@@ -42,8 +42,8 @@ func TestManager_HandleEventsMultiple(t *testing.T) {
 
 // TestManager_PopEvent checks if we our pop works appropriately
 func TestManager_PopEvent(t *testing.T) {
-	buttonDownPressed := &sdl.KeyboardEvent{Type: sdl.KEYDOWN, State: sdl.PRESSED, Keysym: sdl.Keysym{Sym: sdl.K_DOWN}}
-	buttonLeftPressed := &sdl.KeyboardEvent{Type: sdl.KEYDOWN, State: sdl.PRESSED, Keysym: sdl.Keysym{Sym: sdl.K_LEFT}}
+	buttonDownPressed := &sdl.KeyboardEvent{Type: sdl.KEYDOWN, Timestamp: 0, State: sdl.PRESSED, Keysym: sdl.Keysym{Sym: sdl.K_DOWN}}
+	buttonLeftPressed := &sdl.KeyboardEvent{Type: sdl.KEYDOWN, Timestamp: 0, State: sdl.PRESSED, Keysym: sdl.Keysym{Sym: sdl.K_LEFT}}
 	empty := []sdl.KeyboardEvent{}
 
 	cases := []struct {
@@ -69,6 +69,9 @@ func TestManager_PopEvent(t *testing.T) {
 			t.Errorf("Case %d failing. Got %v want %v", i, got, c.want)
 		} else {
 			for j, button := range got {
+				// We have to set the timestamp to 0, otherwise if our code takes longer
+				// it will throw an error
+				button.Timestamp = 0
 				if button != c.want[j] {
 					t.Errorf("Case %d failing. Got %v want %v", i, got, c.want)
 				}

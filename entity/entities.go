@@ -1,3 +1,5 @@
+// Package entity provides the entity manager, spritesheet and font structure, and some built-in components.
+// We have here two pillars of the Entity Component System architecture.
 package entity
 
 import (

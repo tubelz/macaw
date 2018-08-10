@@ -1,3 +1,5 @@
+// Package math provides structures and functions to handle mathematical functions.
+// Example of use: cartesian functions with different types, round numbers, convertion of number types.
 package math
 
 import (
