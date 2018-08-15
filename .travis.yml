@@ -18,4 +18,7 @@ script:
   - go get -v github.com/veandco/go-sdl2/{sdl,mix,img,ttf}
   - cd ../macaw
   - go build
-  - go test ./...
+  - go test -coverprofile=coverage.txt -covermode=count ./...
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
