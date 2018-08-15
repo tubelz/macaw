@@ -12,24 +12,20 @@ import (
 	"github.com/veandco/go-sdl2/ttf"
 )
 
-const (
-	// WinWidth has the default screen width
-	WinWidth = 800
-	// WinHeight has the default screen height
-	WinHeight = 600
-	// WinTitle has the default screen title
-	WinTitle = "macaw"
-)
-
 // We only have one input manager for now and one window, so they are going to be globals
 var (
 	// Window is the window of our game
 	Window *sdl.Window
+	// WinWidth has the default screen width
+	WinWidth = int32(800)
+	// WinHeight has the default screen height
+	WinHeight = int32(600)
+	// WinTitle has the default screen title
+	WinTitle = "Macaw"
 )
 
-// Initialize SDL
+// Initialize initialize SDL libraries
 func Initialize() error {
-	var window *sdl.Window
 	var err error
 	// flags available:
 	// INIT_TIMER          = 0x00000001 // timer subsystem
@@ -70,14 +66,27 @@ func Initialize() error {
 	}
 
 	// we are only creating one window for now, so Window will be a global
-	if window, err = sdl.CreateWindow(WinTitle, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, WinWidth, WinHeight, sdl.WINDOW_SHOWN); err != nil {
+	if Window, err = sdl.CreateWindow(WinTitle,
+		sdl.WINDOWPOS_UNDEFINED,
+		sdl.WINDOWPOS_UNDEFINED,
+		WinWidth,
+		WinHeight,
+		sdl.WINDOW_SHOWN); err != nil {
 		utils.LogFatalf("Failed to create window: %s\n", err)
 	}
-	Window = window
 
 	// Whenever there's a text input from user the text input should be activate to start accepting Unicode characters.
 	sdl.StopTextInput()
 	return err
+}
+
+// SetFullscreen changes the Window's fullscreen state
+// Flags are:
+// sdl.WINDOW_FULLSCREEN (0x00000001) - for "real" fullscreen with a videomode change
+// sdl.WINDOW_FULLSCREEN_DESKTOP (sdl.WINDOW_FULLSCREEN | 0x00001000) -  for "fake" fullscreen that takes the size of the desktop
+// 0 - window mode
+func SetFullscreen(flags uint32) {
+	Window.SetFullscreen(flags)
 }
 
 // QuitImg unloads libraries loaded with img.Init()
