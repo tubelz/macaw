@@ -10,7 +10,7 @@ language: go
 
 go:
   - "1.x"
-  - "1.8"
+  - "1.8.x"
   - "1.10.x"
   - master
 
@@ -18,7 +18,9 @@ script:
   - go get -v github.com/veandco/go-sdl2/{sdl,mix,img,ttf}
   - cd ../macaw
   - go build
-  - go test -coverprofile=coverage.txt -covermode=count ./...
+  # this is being used instead of `go test -coverprofile=coverage.txt -covermode=count ./...` 
+  # because we get the error in 1.8 'cannot use test profile flag with multiple packages'
+  - ./test.sh
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
