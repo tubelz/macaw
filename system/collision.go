@@ -20,36 +20,27 @@ func (c *CollisionSystem) Init() {}
 // Update check for collision and notify observers
 func (c *CollisionSystem) Update() {
 	var component interface{}
-	var ok bool
 
-	it := c.EntityManager.IterAvailable()
+	requiredComponents := []entity.Component{&entity.PositionComponent{},
+		&entity.CollisionComponent{}}
+	it := c.EntityManager.IterFilter(requiredComponents)
 	for obj, itok := it(); itok; obj, itok = it() {
-		if component, ok = obj.GetComponent("position"); !ok {
-			continue
-		}
+		component = obj.GetComponent(&entity.PositionComponent{})
 		position := component.(*entity.PositionComponent)
-		if component, ok = obj.GetComponent("collision"); !ok {
-			continue
-		}
+		component := obj.GetComponent(&entity.CollisionComponent{})
 		collision := component.(*entity.CollisionComponent)
-
 		// check collision with border
 		c.checkBorderCollision(obj, position, collision)
 
 		// check collision with other entities
-		it2 := c.EntityManager.IterAvailable()
+		it2 := c.EntityManager.IterFilter(requiredComponents)
 		for obj2, itok2 := it2(); itok2; obj2, itok2 = it2() {
 			if obj == obj2 {
 				continue
 			}
-			if component, ok = obj2.GetComponent("position"); !ok {
-				continue
-			}
+			component = obj2.GetComponent(&entity.PositionComponent{})
 			position2 := component.(*entity.PositionComponent)
-			if component, ok = obj2.GetComponent("collision"); !ok {
-				continue
-			}
-
+			component = obj2.GetComponent(&entity.CollisionComponent{})
 			collision2 := component.(*entity.CollisionComponent)
 
 			if c.checkCollisionBetweenAreas(position, collision, position2, collision2) {
@@ -129,16 +120,10 @@ func InvertVel(event Event) {
 	collision := event.(*CollisionEvent)
 	log.Printf("Inverting pos and mov of obj %d", collision.Ent.GetID())
 
-	component, ok := collision.Ent.GetComponent("position")
-	if !ok {
-		return
-	}
+	component := collision.Ent.GetComponent(&entity.PositionComponent{})
 	position := component.(*entity.PositionComponent)
 
-	component, ok = collision.Ent.GetComponent("physics")
-	if !ok {
-		return
-	}
+	component = collision.Ent.GetComponent(&entity.PhysicsComponent{})
 	physics := component.(*entity.PhysicsComponent)
 
 	intersectRect := intersection(collision.Ent, collision.With)
@@ -182,14 +167,13 @@ func InvertVel(event Event) {
 
 // intersection get the intersection rectangle between two objects
 func intersection(obj1, obj2 *entity.Entity) sdl.Rect {
-	c, _ := obj1.GetComponent("position")
-	position1 := c.(*entity.PositionComponent)
-	c, _ = obj2.GetComponent("position")
-	position2 := c.(*entity.PositionComponent)
-	c, _ = obj1.GetComponent("collision")
-	collision1 := c.(*entity.CollisionComponent)
-	c, _ = obj2.GetComponent("collision")
-	collision2 := c.(*entity.CollisionComponent)
+	posComp := &entity.PositionComponent{}
+	position1 := obj1.GetComponent(posComp).(*entity.PositionComponent)
+	position2 := obj2.GetComponent(posComp).(*entity.PositionComponent)
+
+	colComp := &entity.CollisionComponent{}
+	collision1 := obj1.GetComponent(colComp).(*entity.CollisionComponent)
+	collision2 := obj2.GetComponent(colComp).(*entity.CollisionComponent)
 
 	for _, area1 := range collision1.CollisionAreas {
 		rect1 := &sdl.Rect{position1.Pos.X + area1.X, position1.Pos.Y + area1.Y, area1.W, area1.H}

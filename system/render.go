@@ -47,7 +47,7 @@ func (r *RenderSystem) SetCamera(camera entity.Entitier) {
 
 // GetCameraPosition gets the camera position
 func (r *RenderSystem) GetCameraPosition() (int32, int32) {
-	if component, ok := r.Camera.GetComponent("position"); ok {
+	if component := r.Camera.GetComponent(&entity.PositionComponent{}); component != nil {
 		position := component.(*entity.PositionComponent)
 		return position.Pos.X, position.Pos.Y
 	}
@@ -66,9 +66,9 @@ func (r *RenderSystem) isRenderable(pos *sdl.Point, size *sdl.Rect) bool {
 	if r.Camera == nil {
 		return false
 	}
-	if component, ok := r.Camera.GetComponent("position"); ok {
+	if component := r.Camera.GetComponent(&entity.PositionComponent{}); component != nil {
 		position := component.(*entity.PositionComponent)
-		c, _ := r.Camera.GetComponent("camera")
+		c := r.Camera.GetComponent(&entity.CameraComponent{})
 		camera := c.(*entity.CameraComponent)
 
 		// check
@@ -82,8 +82,7 @@ func (r *RenderSystem) isRenderable(pos *sdl.Point, size *sdl.Rect) bool {
 // Update will draw the entities accordingly to their position.
 // it can render animated sprites, fonts or geometry
 func (r *RenderSystem) Update() {
-	var ok bool
-	var component interface{}
+	var component entity.Component
 
 	if r.Camera == nil {
 		logFatal("Please, assign at least one camera to the render system")
@@ -95,25 +94,24 @@ func (r *RenderSystem) Update() {
 	// interpolation variable
 	alpha := float32(r.accumulator) / UpdateTickLength
 
-	it := r.EntityManager.IterAvailable()
+	requiredComponents := []entity.Component{&entity.PositionComponent{}}
+	it := r.EntityManager.IterFilter(requiredComponents)
 	for obj, itok := it(); itok; obj, itok = it() {
-		components := obj.GetComponents()
 		// Grid component
-		if component, ok = components["grid"]; ok {
+		if component = obj.GetComponent(&entity.GridComponent{}); component != nil {
 			grid := component.(*entity.GridComponent)
 			r.drawGrid(grid)
 			continue
 		}
 		// Position component
-		component, ok = components["position"]
-		if !ok {
+		component = obj.GetComponent(&entity.PositionComponent{})
+		if component == nil {
 			continue
 		}
 		position := component.(*entity.PositionComponent)
 
 		// Do interpolation if necessary - requires physics component (physics)
-		component, ok = components["physics"]
-		if ok {
+		if component = obj.GetComponent(&entity.PhysicsComponent{}); component != nil {
 			physics := component.(*entity.PhysicsComponent)
 			if physics.FuturePos == nil {
 				position.Pos.X = 0
@@ -125,22 +123,21 @@ func (r *RenderSystem) Update() {
 		}
 
 		// Geometry component
-		component, ok = components["geometry"]
-		if ok {
+		if component = obj.GetComponent(&entity.RectangleComponent{}); component != nil {
 			r.drawGeometry(position, component)
 			continue
 		}
 
 		// Render component
-		component, ok = components["render"]
-		if !ok {
+		component = obj.GetComponent(&entity.RenderComponent{})
+		if component == nil {
 			continue
 		}
 		render := component.(*entity.RenderComponent)
 
 		// Font Component
-		component, ok = components["font"]
-		if ok {
+		component = obj.GetComponent(&entity.FontComponent{})
+		if component != nil {
 			font := component.(*entity.FontComponent)
 			if font.Modified {
 				generateTextureFromFont(render, font)
@@ -149,8 +146,8 @@ func (r *RenderSystem) Update() {
 		}
 
 		// Check for animation component
-		component, ok = components["animation"]
-		if ok {
+		component = obj.GetComponent(&entity.AnimationComponent{})
+		if component != nil {
 			animation := component.(*entity.AnimationComponent)
 			render.Crop = nextAnimation(r.time, animation, render.Crop)
 		}

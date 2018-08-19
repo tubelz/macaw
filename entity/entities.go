@@ -6,6 +6,7 @@ import (
 	"github.com/tubelz/macaw/math"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
+	"reflect"
 )
 
 // Component is the abstract type for each component
@@ -15,9 +16,9 @@ type Component interface{}
 type Entitier interface {
 	GetID() uint16
 	GetComponents() map[string]Component
-	AddComponent(string, Component)
-	DelComponent(key string)
-	GetComponent(componentName string) (Component, bool)
+	AddComponent(Component)
+	DelComponent(Component)
+	GetComponent(Component) Component
 }
 
 // Entity is the struct that contains the components. Right now the id's are not being used
@@ -42,20 +43,22 @@ func (e *Entity) GetComponents() map[string]Component {
 	return e.components
 }
 
-// GetComponent returns the given component
-func (e *Entity) GetComponent(componentName string) (Component, bool) {
-	val, ok := e.components[componentName]
-	return val, ok
+// GetComponent returns the given component of the entity
+func (e *Entity) GetComponent(component Component) Component {
+	compType := reflect.TypeOf(component)
+	return e.components[compType.String()]
 }
 
-// AddComponent adds a component to the component map
-func (e *Entity) AddComponent(name string, c Component) {
-	e.components[name] = c
+// AddComponent adds a component to the component map of the entity
+func (e *Entity) AddComponent(c Component) {
+	compType := reflect.TypeOf(c)
+	e.components[compType.String()] = c
 }
 
-// DelComponent removes the given component
-func (e *Entity) DelComponent(key string) {
-	delete(e.components, key)
+// DelComponent removes the given component of the entity
+func (e *Entity) DelComponent(c Component) {
+	compType := reflect.TypeOf(c)
+	delete(e.components, compType.String())
 }
 
 // Manager is the struct responsible to manage the entities in your game
@@ -153,6 +156,28 @@ func (m *Manager) IterAvailable() func() (*Entity, bool) {
 		for i++; i < entitySize; i++ {
 			if m.entities[i] != nil {
 				return m.entities[i], true
+			}
+		}
+		return nil, false
+	}
+}
+
+// IterFilter creates an iterator with the available entities that contain the given components
+func (m *Manager) IterFilter(components []Component) func() (*Entity, bool) {
+	iterator := m.IterAvailable()
+	return func() (*Entity, bool) {
+		var isValid bool
+		for entity, itok := iterator(); itok; entity, itok = iterator() {
+			isValid = true
+			for _, component := range components {
+				// If we don't find one of the required components in the entity, the entity is not valid
+				if tempComponent := entity.GetComponent(component); tempComponent == nil {
+					isValid = false
+					break
+				}
+			}
+			if isValid {
+				return entity, true
 			}
 		}
 		return nil, false

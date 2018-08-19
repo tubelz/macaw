@@ -1,7 +1,6 @@
 package system
 
 import (
-	// "log"
 	"github.com/tubelz/macaw/entity"
 	"github.com/tubelz/macaw/math"
 )
@@ -18,16 +17,14 @@ func (p *PhysicsSystem) Init() {}
 
 // Update change the position and velocity accordingly. We are using Semi-implicit Euler
 func (p *PhysicsSystem) Update() {
-	var ok bool
 	var component interface{}
+	phyComp := &entity.PhysicsComponent{}
 
-	it := p.EntityManager.IterAvailable()
+	requiredComponents := []entity.Component{phyComp}
+	it := p.EntityManager.IterFilter(requiredComponents)
+	// it := p.EntityManager.IterAvailable()
 	for obj, itok := it(); itok; obj, itok = it() {
-		components := obj.GetComponents()
-		component, ok = components["physics"]
-		if !ok {
-			continue
-		}
+		component = obj.GetComponent(phyComp)
 		physics := component.(*entity.PhysicsComponent)
 
 		// To use Semi-implicit Euler, we first update the velocity, then we update the position.

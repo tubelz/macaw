@@ -2,6 +2,7 @@ package entity
 
 import (
 	"testing"
+	// "log"
 )
 
 func TestManager_CreateIncreaseID(t *testing.T) {
@@ -65,7 +66,7 @@ func TestManager_IterAvailable(t *testing.T) {
 	}
 }
 
-func TestManager_IterAvailable_NoItem(t *testing.T) {
+func TestManager_IterAvailable_noItem(t *testing.T) {
 	m := &Manager{}
 
 	it := m.IterAvailable()
@@ -74,7 +75,7 @@ func TestManager_IterAvailable_NoItem(t *testing.T) {
 	}
 }
 
-func TestManager_TwoIterAvailable(t *testing.T) {
+func TestManager_IterAvailable_twoIterators(t *testing.T) {
 	m := &Manager{}
 	_ = m.Create("")
 	_ = m.Create("")
@@ -95,6 +96,88 @@ func TestManager_TwoIterAvailable(t *testing.T) {
 	if obj1.GetID() != obj2.GetID() {
 		t.Errorf(`IterAvailable getting different objects when it should get the
 			same object. Expecting 0 == 0 got %d == %d`, obj1.GetID(), obj2.GetID())
+	}
+}
+
+type TestComponent struct {
+	fakeData string
+}
+
+func TestManager_IterFilter_simple(t *testing.T) {
+	m := &Manager{}
+	_ = m.Create("e1")
+	e2 := m.Create("e2")
+	_ = m.Create("e3")
+	e4 := m.Create("e4")
+	// Create components
+	c1 := &TestComponent{fakeData: "c1"}
+	c2 := &TestComponent{fakeData: "c2"}
+	// Add components
+	e2.AddComponent(c1)
+	e4.AddComponent(c2)
+	// Create list of components we are interested in
+	listComponents := []Component{&TestComponent{}}
+	// Verify that we filtered them correctly
+	it := m.IterFilter(listComponents)
+	count := 0
+	for entityObj, itok := it(); itok; entityObj, itok = it() {
+		count++
+		if entityObj.GetID() == 0 || entityObj.GetID() == 2 {
+			t.Error("IterFilter([]Component) not filtering correctly.")
+		}
+	}
+	if count < 2 {
+		t.Error(`IterFilter([]Component) not filtering correctly.
+			Filtering more than it should`)
+	}
+}
+
+type TestComponent2 struct{}
+
+func TestManager_IterFilter_multiple(t *testing.T) {
+	m := &Manager{}
+	_ = m.Create("e1")
+	e2 := m.Create("e2")
+	_ = m.Create("e3")
+	e4 := m.Create("e4")
+	e5 := m.Create("e5")
+
+	// Create components
+	c1 := &TestComponent{fakeData: "c1"}
+	c2 := &TestComponent2{}
+	// Add components
+	e2.AddComponent(c1)
+	e2.AddComponent(c2)
+	e4.AddComponent(c1)
+	e5.AddComponent(c2)
+	// Create list of components we are interested in
+	listComponents := []Component{&TestComponent{}}
+	// Verify that we filtered them correctly
+	it := m.IterFilter(listComponents)
+	count := 0
+	for entityObj, itok := it(); itok; entityObj, itok = it() {
+		count++
+		if entityObj.GetID() != 1 && entityObj.GetID() != 3 {
+			t.Error("IterFilter([]Component) not filtering correctly.")
+		}
+	}
+	if count < 2 {
+		t.Error(`IterFilter([]Component) not filtering correctly.
+			Filtering more than it should`)
+	}
+
+	count = 0
+	listComponents2 := []Component{&TestComponent{}, &TestComponent2{}}
+	it2 := m.IterFilter(listComponents2)
+	for entityObj, itok := it2(); itok; entityObj, itok = it2() {
+		count++
+		if entityObj.GetID() != 1 {
+			t.Error("IterFilter([]Component) not filtering correctly.")
+		}
+	}
+	if count != 1 {
+		t.Error(`IterFilter([]Component) not filtering correctly.
+			Filtering more than it should`)
 	}
 }
 
