@@ -267,3 +267,11 @@ func BenchmarkBinSearchInsert(b *testing.B) {
 		binarySearch(arr, 0, size, val)
 	}
 }
+
+func BenchmarkEntityAddComponent(b *testing.B) {
+	entityManager := &Manager{}
+	entityTest := entityManager.Create("entity")
+	for n := 0; n < b.N; n++ {
+		entityTest.AddComponent(&PositionComponent{})
+	}
+}
