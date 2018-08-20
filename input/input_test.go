@@ -12,10 +12,10 @@ func TestManager_HandleEventsBasic(t *testing.T) {
 
 	sdl.PushEvent(buttonDownPressed)
 	m.HandleEvents()
-	if len(m.button) < 0 {
+	if len(m.buttons) < 0 {
 		t.Error("Expecting 1 button in event queue, got 0")
-	} else if m.button[0] != *buttonDownPressed {
-		t.Errorf("Expecting queue event to be %v, got %v", buttonDownPressed, m.button[0])
+	} else if m.buttons[0] != *buttonDownPressed {
+		t.Errorf("Expecting queue event to be %v, got %v", buttonDownPressed, m.buttons[0])
 	}
 }
 
@@ -31,12 +31,12 @@ func TestManager_HandleEventsMultiple(t *testing.T) {
 	sdl.PushEvent(buttonLeftPressed)
 	sdl.PushEvent(buttonDownReleased)
 	m.HandleEvents()
-	if len(m.button) != 3 {
-		t.Errorf("Expecting 3 buttons in event queue, got %d", len(m.button))
-	} else if m.button[0] != *buttonDownPressed {
-		t.Errorf("Expecting queue event to be %v, got %v", buttonDownPressed, m.button[0])
-	} else if m.button[2] != *buttonDownReleased {
-		t.Errorf("Expecting queue event to be %v, got %v", buttonDownReleased, m.button[2])
+	if len(m.buttons) != 3 {
+		t.Errorf("Expecting 3 buttons in event queue, got %d", len(m.buttons))
+	} else if m.buttons[0] != *buttonDownPressed {
+		t.Errorf("Expecting queue event to be %v, got %v", buttonDownPressed, m.buttons[0])
+	} else if m.buttons[2] != *buttonDownReleased {
+		t.Errorf("Expecting queue event to be %v, got %v", buttonDownReleased, m.buttons[2])
 	}
 }
 
@@ -57,13 +57,13 @@ func TestManager_PopEvent(t *testing.T) {
 
 	m := &Manager{}
 	for i, c := range cases {
-		m.button = []sdl.KeyboardEvent{}
+		m.buttons = []sdl.KeyboardEvent{}
 		for _, event := range c.in {
 			sdl.PushEvent(event)
 		}
 		m.HandleEvents()
 		m.PopEvent()
-		got := m.button
+		got := m.buttons
 		// compare slices
 		if len(got) != len(c.want) {
 			t.Errorf("Case %d failing. Got %v want %v", i, got, c.want)
@@ -77,5 +77,24 @@ func TestManager_PopEvent(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+func TestManager_Button(t *testing.T) {
+	m := &Manager{}
+	// check one button first
+	buttonDownPressed := &sdl.KeyboardEvent{Type: sdl.KEYDOWN, Timestamp: 0, State: sdl.PRESSED, Keysym: sdl.Keysym{Sym: sdl.K_DOWN}}
+	sdl.PushEvent(buttonDownPressed)
+	m.HandleEvents()
+	if m.Button() != *buttonDownPressed {
+		t.Errorf("Button() == %v; want %v", m.Button(), *buttonDownPressed)
+	}
+	// check if we have two buttons in the queue.
+	// It should show the first button since we haven't cleared the queue
+	buttonLeftPressed := &sdl.KeyboardEvent{Type: sdl.KEYDOWN, Timestamp: 0, State: sdl.PRESSED, Keysym: sdl.Keysym{Sym: sdl.K_LEFT}}
+	sdl.PushEvent(buttonLeftPressed)
+	m.HandleEvents()
+	if m.Button() != *buttonDownPressed {
+		t.Errorf("Button() == %v; want %v", m.Button(), *buttonDownPressed)
 	}
 }
