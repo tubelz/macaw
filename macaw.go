@@ -116,6 +116,9 @@ func QuitFont() {
 
 // Quit cleans up all initialized subsystems
 func Quit() {
+	QuitImg()
+	QuitSound()
+	QuitFont()
 	// Close SDL
 	sdl.Quit()
 }
