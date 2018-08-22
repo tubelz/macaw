@@ -59,10 +59,10 @@ func Initialize() error {
 		utils.LogFatalf("Failed to initialize MIX: %s\n", err)
 	}
 	soundFlags := mix.INIT_FLAC | mix.INIT_OGG
-	if err := mix.Init(soundFlags); err != nil {
+	if err := mix.Init(soundFlags); err != nil && cmd.Parser.Debug() {
 		log.Println(err)
 	}
-	if err := mix.OpenAudio(22050, mix.DEFAULT_FORMAT, 2, 4096); err != nil {
+	if err := mix.OpenAudio(22050, mix.DEFAULT_FORMAT, 2, 4096); err != nil && cmd.Parser.Debug() {
 		log.Println(err)
 	}
 
