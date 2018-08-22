@@ -1,6 +1,7 @@
 package macaw
 
 import (
+	"github.com/tubelz/macaw/cmd"
 	"github.com/tubelz/macaw/input"
 	"github.com/tubelz/macaw/internal/utils"
 	"github.com/tubelz/macaw/system"
@@ -59,7 +60,7 @@ func (g *GameLoop) Run() {
 		}
 		g.render()
 
-		if g.now >= fpsTick+1000 {
+		if cmd.Parser.Debug() && g.now >= fpsTick+1000 {
 			log.Printf("FPS: %d\n", g.fps)
 			g.fps = 0
 			fpsTick += 1000

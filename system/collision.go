@@ -1,6 +1,7 @@
 package system
 
 import (
+	"github.com/tubelz/macaw/cmd"
 	"github.com/tubelz/macaw/entity"
 	"github.com/tubelz/macaw/math"
 	"github.com/veandco/go-sdl2/sdl"
@@ -118,7 +119,9 @@ func (c *CollisionEvent) Name() string {
 // InvertVel invert the vel of the collided object.
 func InvertVel(event Event) {
 	collision := event.(*CollisionEvent)
-	log.Printf("Inverting pos and mov of obj %d", collision.Ent.GetID())
+	if cmd.Parser.Debug() {
+		log.Printf("Inverting pos and mov of obj %d", collision.Ent.GetID())
+	}
 
 	component := collision.Ent.GetComponent(&entity.PositionComponent{})
 	position := component.(*entity.PositionComponent)

@@ -5,6 +5,7 @@ package macaw
 import (
 	"log"
 
+	"github.com/tubelz/macaw/cmd"
 	"github.com/tubelz/macaw/internal/utils"
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/mix"
@@ -77,6 +78,11 @@ func Initialize() error {
 
 	// Whenever there's a text input from user the text input should be activate to start accepting Unicode characters.
 	sdl.StopTextInput()
+
+	if cmd.Parser.Debug() {
+		log.Println("Macaw has been initialized successufuly")
+	}
+
 	return err
 }
 

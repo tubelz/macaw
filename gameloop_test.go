@@ -18,7 +18,7 @@ func TestGameLoop_Run(t *testing.T) {
 	em := &entity.Manager{}
 	sceneGame := &Scene{Name: "game"}
 	sceneGame.AddRenderSystem(&system.RenderSystem{Camera: &entity.Entity{}, EntityManager: em})
-	// Initialize the mocked systems to test whether systems are executed in sequence work or not
+	// Initialize the mocked systems to test whether systems are executed in sequence or not
 	var val int
 	mockFunc1 := func() {
 		if val != 0 {

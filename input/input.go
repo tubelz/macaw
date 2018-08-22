@@ -2,6 +2,7 @@
 package input
 
 import (
+	"github.com/tubelz/macaw/cmd"
 	"github.com/veandco/go-sdl2/sdl"
 	"log"
 )
@@ -45,7 +46,9 @@ func (i *Manager) HandleEvents() bool {
 			i.Mouse.Button = t.Button
 			i.Mouse.State = t.State
 		default:
-			log.Printf("Event not mapped")
+			if cmd.Parser.Debug() {
+				log.Printf("Event not mapped")
+			}
 		}
 	}
 	return running
