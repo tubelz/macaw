@@ -126,7 +126,9 @@ func InvertVel(event Event) {
 	component := collision.Ent.GetComponent(&entity.PositionComponent{})
 	position := component.(*entity.PositionComponent)
 
-	component = collision.Ent.GetComponent(&entity.PhysicsComponent{})
+	if component = collision.Ent.GetComponent(&entity.PhysicsComponent{}); component == nil {
+		return
+	}
 	physics := component.(*entity.PhysicsComponent)
 
 	intersectRect := intersection(collision.Ent, collision.With)
