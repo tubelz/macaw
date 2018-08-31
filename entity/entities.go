@@ -204,14 +204,20 @@ type PhysicsComponent struct {
 
 // RenderComponent is responsible for the rendering of the entity
 type RenderComponent struct {
-	Renderer *sdl.Renderer
-	Texture  *sdl.Texture
-	Crop     *sdl.Rect // part of the texture which will be displayed
-	Scroll   bool
-	Angle    float64
-	Center   *sdl.Point
-	Flip     sdl.RendererFlip
+	Texture    *sdl.Texture
+	Crop       *sdl.Rect // part of the texture which will be displayed
+	Angle      float64
+	Center     *sdl.Point
+	Flip       sdl.RendererFlip
+	RenderType int
 }
+
+const (
+	RTSprite = iota
+	RTFont
+	RTGeometry
+	RTGrid
+)
 
 // CameraComponent is responsible to render only the content of the viewport
 type CameraComponent struct {

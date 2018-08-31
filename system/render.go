@@ -62,7 +62,7 @@ func (r *RenderSystem) OffsetPosition(x, y int32) (int32, int32) {
 	return x, y
 }
 
-func (r *RenderSystem) isRenderable(pos *sdl.Point, size *sdl.Rect) bool {
+func (r *RenderSystem) isRenderable(pos *sdl.Point, size sdl.Rect) bool {
 	if r.Camera == nil {
 		return false
 	}
@@ -71,7 +71,7 @@ func (r *RenderSystem) isRenderable(pos *sdl.Point, size *sdl.Rect) bool {
 		c := r.Camera.GetComponent(&entity.CameraComponent{})
 		camera := c.(*entity.CameraComponent)
 
-		// check
+		// check if there is an intersection
 		objRect := &sdl.Rect{pos.X, pos.Y, size.W, size.H}
 		cameraRect := sdl.Rect{position.Pos.X, position.Pos.Y, camera.ViewportSize.X, camera.ViewportSize.Y}
 		return cameraRect.HasIntersection(objRect)
@@ -99,9 +99,6 @@ func (r *RenderSystem) Update() {
 	for obj, i := it(); i != -1; obj, i = it() {
 		// Position component
 		component = obj.GetComponent(&entity.PositionComponent{})
-		if component == nil {
-			continue
-		}
 		position := component.(*entity.PositionComponent)
 
 		// Do interpolation if necessary - requires physics component (physics)
@@ -116,45 +113,46 @@ func (r *RenderSystem) Update() {
 			}
 		}
 
-		// Geometry component
-		if component = obj.GetComponent(&entity.RectangleComponent{}); component != nil {
-			r.drawGeometry(position, component)
-			continue
-		}
-
 		// Render component
 		component = obj.GetComponent(&entity.RenderComponent{})
-		if component == nil {
-			continue
-		}
 		render := component.(*entity.RenderComponent)
 
-		// Font Component
-		component = obj.GetComponent(&entity.FontComponent{})
-		if component != nil {
-			font := component.(*entity.FontComponent)
-			if font.Modified {
-				generateTextureFromFont(render, font)
-				font.Modified = false
+		switch render.RenderType {
+		case entity.RTSprite:
+			// Check for animation component
+			component = obj.GetComponent(&entity.AnimationComponent{})
+			if component != nil {
+				animation := component.(*entity.AnimationComponent)
+				render.Crop = nextAnimation(r.time, animation, render.Crop)
+			}
+		case entity.RTFont:
+			// Font Component
+			component = obj.GetComponent(&entity.FontComponent{})
+			if component != nil {
+				font := component.(*entity.FontComponent)
+				if font.Modified {
+					r.generateTextureFromFont(render, font)
+					font.Modified = false
+				}
+			}
+		case entity.RTGeometry:
+			// Check for geometry components
+			r.drawGeometry(obj, position.Pos)
+			continue
+		case entity.RTGrid:
+			// Grid component
+			if component = obj.GetComponent(&entity.GridComponent{}); component != nil {
+				grid := component.(*entity.GridComponent)
+				r.drawGrid(grid)
+				continue
 			}
 		}
 
-		// Check for animation component
-		component = obj.GetComponent(&entity.AnimationComponent{})
-		if component != nil {
-			animation := component.(*entity.AnimationComponent)
-			render.Crop = nextAnimation(r.time, animation, render.Crop)
-		}
-
-		// Draw
+		// Draw objects that have texture
 		// Offset according to the camera
 		crop := *render.Crop
 		var x, y int32
-		if render.Scroll {
-			crop.X, crop.Y = r.GetCameraPosition()
-			x = position.Pos.X
-			y = position.Pos.Y
-		} else if !r.isRenderable(position.Pos, render.Crop) {
+		if !r.isRenderable(position.Pos, crop) {
 			// check if it is necessary to render
 			continue
 		} else {
@@ -167,18 +165,11 @@ func (r *RenderSystem) Update() {
 }
 
 // generateTextureFromFont generate Texture from Font component
-func generateTextureFromFont(render *entity.RenderComponent, font *entity.FontComponent) {
+func (r *RenderSystem) generateTextureFromFont(render *entity.RenderComponent, font *entity.FontComponent) {
 	var newTexture *sdl.Texture
 	var solid *sdl.Surface
 	var color sdl.Color
 	var err error
-	// Error checking
-	if render == nil {
-		logFatal("Error: Render cannot be null")
-	}
-	if font == nil {
-		logFatal("Error: Font cannot be null")
-	}
 	// Get color. If color is not set, make it black
 	if font.Color == nil {
 		color = sdl.Color{0, 0, 0, 255}
@@ -191,7 +182,7 @@ func generateTextureFromFont(render *entity.RenderComponent, font *entity.FontCo
 	}
 	defer solid.Free()
 	//Create texture from surface pixels
-	newTexture, err = render.Renderer.CreateTextureFromSurface(solid)
+	newTexture, err = r.Renderer.CreateTextureFromSurface(solid)
 	if err != nil {
 		logFatalf("Unable to create texture from %s! SDL Error: %s\n", font.Text, sdl.GetError())
 	}
@@ -200,21 +191,21 @@ func generateTextureFromFont(render *entity.RenderComponent, font *entity.FontCo
 }
 
 // drawGeometry draws on the renderer the geometry. We don't use texture, because it's faster to draw directly using the renderer
-func (r *RenderSystem) drawGeometry(pos *entity.PositionComponent, geometryComponent interface{}) {
+func (r *RenderSystem) drawGeometry(geometryEntity *entity.Entity, pos *sdl.Point) {
 	render := r.Renderer
-	switch g := geometryComponent.(type) {
-	case *entity.RectangleComponent:
+	var component entity.Component
+	component = geometryEntity.GetComponent(&entity.RectangleComponent{})
+	if component != nil {
+		g := component.(*entity.RectangleComponent)
 		render.SetDrawColor(g.Color.R, g.Color.G, g.Color.B, g.Color.A)
-		x := pos.Pos.X
-		y := pos.Pos.Y
 		w := g.Size.X
 		h := g.Size.Y
 		// Offset position according to camera
-		x, y = r.OffsetPosition(x, y)
+		x, y := r.OffsetPosition(pos.X, pos.Y)
 		// Result of rectangle to draw
 		rect := &sdl.Rect{x, y, w, h}
 		// check if it is necessary to render
-		if !r.isRenderable(pos.Pos, rect) {
+		if !r.isRenderable(pos, *rect) {
 			return
 		}
 		if g.Filled {
@@ -222,7 +213,7 @@ func (r *RenderSystem) drawGeometry(pos *entity.PositionComponent, geometryCompo
 		} else {
 			render.DrawRect(rect)
 		}
-	default:
+	} else {
 		logFatal("Geometry component not implemented in render function")
 	}
 }
