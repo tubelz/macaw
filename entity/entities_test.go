@@ -2,7 +2,6 @@ package entity
 
 import (
 	"testing"
-	// "log"
 )
 
 func TestManager_CreateIncreaseID(t *testing.T) {
@@ -48,20 +47,20 @@ func TestManager_IterAvailable(t *testing.T) {
 	_ = m.Create("")
 	// Delete object with ID 1 so we expect to return objects with ID 0 and 2
 	m.Delete(1)
-	it := m.IterAvailable()
-	if obj, ok := it(); !ok {
+	it := m.IterAvailable(-1)
+	if obj, i := it(); i == -1 {
 		t.Error("Expecting true, returned false")
 	} else if obj.GetID() != 0 {
 		t.Error("First object in test should have id 0")
 	}
 
-	if obj, ok := it(); !ok {
+	if obj, i := it(); i == -1 {
 		t.Error("Expecting true, returned false")
 	} else if obj.GetID() != 2 {
 		t.Error("Second object in test should have id 2")
 	}
 
-	if _, ok := it(); ok {
+	if _, i := it(); i != -1 {
 		t.Error("Expecting iterator to end")
 	}
 }
@@ -69,8 +68,8 @@ func TestManager_IterAvailable(t *testing.T) {
 func TestManager_IterAvailable_noItem(t *testing.T) {
 	m := &Manager{}
 
-	it := m.IterAvailable()
-	if _, ok := it(); ok {
+	it := m.IterAvailable(-1)
+	if _, i := it(); i != -1 {
 		t.Errorf("IterAvailable should not return true for empty items")
 	}
 }
@@ -82,8 +81,8 @@ func TestManager_IterAvailable_twoIterators(t *testing.T) {
 	_ = m.Create("")
 	// Delete object with ID 1 so we expect to return objects with ID 0 and 2
 	m.Delete(1)
-	it1 := m.IterAvailable()
-	it2 := m.IterAvailable()
+	it1 := m.IterAvailable(-1)
+	it2 := m.IterAvailable(-1)
 
 	obj1, _ := it1()
 	obj2, _ := it2()
@@ -118,9 +117,9 @@ func TestManager_IterFilter_simple(t *testing.T) {
 	// Create list of components we are interested in
 	listComponents := []Component{&TestComponent{}}
 	// Verify that we filtered them correctly
-	it := m.IterFilter(listComponents)
+	it := m.IterFilter(listComponents, -1)
 	count := 0
-	for entityObj, itok := it(); itok; entityObj, itok = it() {
+	for entityObj, i := it(); i != -1; entityObj, i = it() {
 		count++
 		if entityObj.GetID() == 0 || entityObj.GetID() == 2 {
 			t.Error("IterFilter([]Component) not filtering correctly.")
@@ -153,9 +152,9 @@ func TestManager_IterFilter_multiple(t *testing.T) {
 	// Create list of components we are interested in
 	listComponents := []Component{&TestComponent{}}
 	// Verify that we filtered them correctly
-	it := m.IterFilter(listComponents)
+	it := m.IterFilter(listComponents, -1)
 	count := 0
-	for entityObj, itok := it(); itok; entityObj, itok = it() {
+	for entityObj, i := it(); i != -1; entityObj, i = it() {
 		count++
 		if entityObj.GetID() != 1 && entityObj.GetID() != 3 {
 			t.Error("IterFilter([]Component) not filtering correctly.")
@@ -168,8 +167,8 @@ func TestManager_IterFilter_multiple(t *testing.T) {
 
 	count = 0
 	listComponents2 := []Component{&TestComponent{}, &TestComponent2{}}
-	it2 := m.IterFilter(listComponents2)
-	for entityObj, itok := it2(); itok; entityObj, itok = it2() {
+	it2 := m.IterFilter(listComponents2, -1)
+	for entityObj, i := it2(); i != -1; entityObj, i = it2() {
 		count++
 		if entityObj.GetID() != 1 {
 			t.Error("IterFilter([]Component) not filtering correctly.")
@@ -268,10 +267,51 @@ func BenchmarkBinSearchInsert(b *testing.B) {
 	}
 }
 
-func BenchmarkEntityAddComponent(b *testing.B) {
+func BenchmarkEntityAddComponentSimple(b *testing.B) {
 	entityManager := &Manager{}
 	entityTest := entityManager.Create("entity")
 	for n := 0; n < b.N; n++ {
 		entityTest.AddComponent(&PositionComponent{})
+	}
+}
+
+func BenchmarkEntityAddComponentMultiple(b *testing.B) {
+	entityManager := &Manager{}
+	entityTest := entityManager.Create("entity")
+	for n := 0; n < b.N; n++ {
+		entityTest.AddComponent(&PositionComponent{})
+		entityTest.AddComponent(&RenderComponent{})
+		entityTest.AddComponent(&AnimationComponent{})
+		entityTest.AddComponent(&FontComponent{})
+	}
+}
+
+func BenchmarkEntityReadComponentSimple(b *testing.B) {
+	entityManager := &Manager{}
+
+	posComponent := &PositionComponent{}
+	e1 := entityManager.Create("entity")
+
+	e1.AddComponent(&posComponent)
+
+	for n := 0; n < b.N; n++ {
+		_ = e1.GetComponent(posComponent)
+	}
+}
+
+func BenchmarkEntityReadComponentMultiple(b *testing.B) {
+	entityManager := &Manager{}
+
+	posComponent := &PositionComponent{}
+	e1 := entityManager.Create("entity")
+
+	e1.AddComponent(&AnimationComponent{})
+	e1.AddComponent(&PhysicsComponent{})
+	e1.AddComponent(&RenderComponent{})
+	e1.AddComponent(&CollisionComponent{})
+	e1.AddComponent(&posComponent)
+
+	for n := 0; n < b.N; n++ {
+		_ = e1.GetComponent(posComponent)
 	}
 }

@@ -24,8 +24,8 @@ func (c *CollisionSystem) Update() {
 
 	requiredComponents := []entity.Component{&entity.PositionComponent{},
 		&entity.CollisionComponent{}}
-	it := c.EntityManager.IterFilter(requiredComponents)
-	for obj, itok := it(); itok; obj, itok = it() {
+	it := c.EntityManager.IterFilter(requiredComponents, -1)
+	for obj, i := it(); i != -1; obj, i = it() {
 		component = obj.GetComponent(&entity.PositionComponent{})
 		position := component.(*entity.PositionComponent)
 		component := obj.GetComponent(&entity.CollisionComponent{})
@@ -34,8 +34,8 @@ func (c *CollisionSystem) Update() {
 		c.checkBorderCollision(obj, position, collision)
 
 		// check collision with other entities
-		it2 := c.EntityManager.IterFilter(requiredComponents)
-		for obj2, itok2 := it2(); itok2; obj2, itok2 = it2() {
+		it2 := c.EntityManager.IterFilter(requiredComponents, i)
+		for obj2, i2 := it2(); i2 != -1; obj2, i2 = it2() {
 			if obj == obj2 {
 				continue
 			}

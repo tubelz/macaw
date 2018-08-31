@@ -21,9 +21,8 @@ func (p *PhysicsSystem) Update() {
 	phyComp := &entity.PhysicsComponent{}
 
 	requiredComponents := []entity.Component{phyComp}
-	it := p.EntityManager.IterFilter(requiredComponents)
-	// it := p.EntityManager.IterAvailable()
-	for obj, itok := it(); itok; obj, itok = it() {
+	it := p.EntityManager.IterFilter(requiredComponents, -1)
+	for obj, i := it(); i != -1; obj, i = it() {
 		component = obj.GetComponent(phyComp)
 		physics := component.(*entity.PhysicsComponent)
 

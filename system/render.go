@@ -94,15 +94,9 @@ func (r *RenderSystem) Update() {
 	// interpolation variable
 	alpha := float32(r.accumulator) / UpdateTickLength
 
-	requiredComponents := []entity.Component{&entity.PositionComponent{}}
-	it := r.EntityManager.IterFilter(requiredComponents)
-	for obj, itok := it(); itok; obj, itok = it() {
-		// Grid component
-		if component = obj.GetComponent(&entity.GridComponent{}); component != nil {
-			grid := component.(*entity.GridComponent)
-			r.drawGrid(grid)
-			continue
-		}
+	requiredComponents := []entity.Component{&entity.RenderComponent{}, &entity.PositionComponent{}}
+	it := r.EntityManager.IterFilter(requiredComponents, -1)
+	for obj, i := it(); i != -1; obj, i = it() {
 		// Position component
 		component = obj.GetComponent(&entity.PositionComponent{})
 		if component == nil {

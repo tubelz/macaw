@@ -149,25 +149,25 @@ func (m *Manager) GetAll() []*Entity {
 }
 
 // IterAvailable creates an iterator for the available entities
-func (m *Manager) IterAvailable() func() (*Entity, bool) {
-	i := -1
+func (m *Manager) IterAvailable(start int) func() (*Entity, int) {
+	i := start
 	entitySize := len(m.entities)
-	return func() (*Entity, bool) {
+	return func() (*Entity, int) {
 		for i++; i < entitySize; i++ {
 			if m.entities[i] != nil {
-				return m.entities[i], true
+				return m.entities[i], i
 			}
 		}
-		return nil, false
+		return nil, -1
 	}
 }
 
-// IterFilter creates an iterator with the available entities that contain the given components
-func (m *Manager) IterFilter(components []Component) func() (*Entity, bool) {
-	iterator := m.IterAvailable()
-	return func() (*Entity, bool) {
+// IterFilter creates an iterator with the available entities and its index that contain the given components
+func (m *Manager) IterFilter(components []Component, start int) func() (*Entity, int) {
+	iterator := m.IterAvailable(start)
+	return func() (*Entity, int) {
 		var isValid bool
-		for entity, itok := iterator(); itok; entity, itok = iterator() {
+		for entity, entityIndex := iterator(); entityIndex != -1; entity, entityIndex = iterator() {
 			isValid = true
 			for _, component := range components {
 				// If we don't find one of the required components in the entity, the entity is not valid
@@ -177,10 +177,10 @@ func (m *Manager) IterFilter(components []Component) func() (*Entity, bool) {
 				}
 			}
 			if isValid {
-				return entity, true
+				return entity, entityIndex
 			}
 		}
-		return nil, false
+		return nil, -1
 	}
 }
 
