@@ -12,40 +12,38 @@ type Spritesheet struct {
 	// renderer
 	Renderer *sdl.Renderer
 	Texture  *sdl.Texture
-	filename string
+	Filepath string
 }
 
 // Init initialize the spritesheet. It generates the texture of that image
-func (s *Spritesheet) Init(renderer *sdl.Renderer, fname string) {
+func (s *Spritesheet) Init() {
 	var newTexture *sdl.Texture
 	var newSurface *sdl.Surface
 	var err error
-	if renderer == nil {
+	if s.Renderer == nil {
 		utils.LogFatal("Render cannot be null")
 	}
-	if _, err = os.Stat(fname); os.IsNotExist(err) {
-		utils.LogFatalf("File **%s** does not exist", fname)
+	if _, err = os.Stat(s.Filepath); os.IsNotExist(err) {
+		utils.LogFatalf("File **%s** does not exist", s.Filepath)
 	}
 	//Load image at specified path
-	newSurface, err = img.Load(fname)
+	newSurface, err = img.Load(s.Filepath)
 	defer newSurface.Free()
 	if err != nil {
-		utils.LogFatalf("Unable to load image %s! SDL_image Error: %s\n", fname, img.GetError())
+		utils.LogFatalf("Unable to load image %s! SDL_image Error: %s\n", s.Filepath, img.GetError())
 	} else {
 		//Create texture from surface pixels
-		newTexture, err = renderer.CreateTextureFromSurface(newSurface)
+		newTexture, err = s.Renderer.CreateTextureFromSurface(newSurface)
 		if err != nil {
-			utils.LogFatalf("Unable to create texture from %s! SDL Error: %s\n", fname, sdl.GetError())
+			utils.LogFatalf("Unable to create texture from %s! SDL Error: %s\n", s.Filepath, sdl.GetError())
 		}
 	}
 	// set values on the struct
 	s.Texture = newTexture
-	s.filename = fname
-	s.Renderer = renderer
 }
 
 // LoadSprite add the information of the sprite to the render component
 func (s *Spritesheet) LoadSprite(crop *sdl.Rect) RenderComponent {
-	sprite := RenderComponent{Renderer: s.Renderer, Texture: s.Texture, Crop: crop}
+	sprite := RenderComponent{Texture: s.Texture, Crop: crop}
 	return sprite
 }

@@ -77,6 +77,6 @@ func (t *MText) GenerateRenderComponent() *RenderComponent {
 		utils.LogFatalf("Unable to create texture from %s! SDL Error: %s\n", t.Text, sdl.GetError())
 	}
 
-	component := &RenderComponent{Renderer: t.renderer, Texture: newTexture, Crop: &sdl.Rect{0, 0, solid.W, solid.H}}
+	component := &RenderComponent{Texture: newTexture, Crop: &sdl.Rect{0, 0, solid.W, solid.H}}
 	return component
 }
