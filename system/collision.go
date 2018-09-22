@@ -46,6 +46,7 @@ func (c *CollisionSystem) Update() {
 
 			if c.checkCollisionBetweenAreas(position, collision, position2, collision2) {
 				c.NotifyEvent(&CollisionEvent{Ent: obj, With: obj2})
+				c.NotifyEvent(&CollisionEvent{Ent: obj2, With: obj})
 			}
 		}
 	}
