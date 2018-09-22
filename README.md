@@ -29,6 +29,8 @@ That example covers many functionalities such as:
 * Fonts
 * Input handler
 
+A more complex (and fun) example can be found in https://github.com/tubelz/crazybird !
+
 ## Discussion (issues/suggestions)
 
 If you have questions, suggestions, or just want to chat about our Game Engine you can go to **##macaw** at [freenode.net](https://webchat.freenode.net?channels=%23%23macaw).
