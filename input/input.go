@@ -69,7 +69,7 @@ func (m *MouseEvent) ClearMouseEvent() {
 	m.Button = 0
 }
 
-// Button returns the first button pressed. Usefull to use in multiple systems
+// Button returns the first button pressed. Useful to use in multiple systems
 func (i *Manager) Button() sdl.KeyboardEvent {
 	if len(i.buttons) > 0 {
 		return i.buttons[0]

@@ -213,9 +213,13 @@ type RenderComponent struct {
 }
 
 const (
+	// RTSprite is the RenderType constant representing sprites
 	RTSprite = iota
+	// RTFont is the RenderType constant representing fonts
 	RTFont
+	// RTGeometry is the RenderType constant representing geometries
 	RTGeometry
+	// RTGrid is the RenderType constant representing grids
 	RTGrid
 )
 

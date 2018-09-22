@@ -62,7 +62,7 @@ func (s *SceneManager) ChangeScene(sceneName string) *Scene {
 	return s.Current()
 }
 
-// Scene is reponsible to hold the systems in a scene
+// Scene is responsible to hold the systems in a scene
 type Scene struct {
 	Name          string
 	UpdateSystems []system.Systemer    // responsible to update the game

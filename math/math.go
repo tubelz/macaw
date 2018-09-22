@@ -1,5 +1,5 @@
 // Package math provides structures and functions to handle mathematical functions.
-// Example of use: cartesian functions with different types, round numbers, convertion of number types.
+// Example of use: cartesian functions with different types, round numbers, conversion of number types.
 package math
 
 import (
@@ -41,8 +41,8 @@ func SumPointWithFPoint(a *sdl.Point, b *FPoint) *sdl.Point {
 	} else if a == nil {
 		return &sdl.Point{Round(b.X), Round(b.Y)}
 	}
-	rounded_b := &sdl.Point{Round(b.X), Round(b.Y)}
-	return SumPoint(a, rounded_b)
+	roundedB := &sdl.Point{Round(b.X), Round(b.Y)}
+	return SumPoint(a, roundedB)
 }
 
 // ConvertPointToFPoint converts a Point to a FPoint
