@@ -1,4 +1,4 @@
-# Macaw [![Build Status](https://travis-ci.org/tubelz/macaw.svg?branch=master)](https://travis-ci.org/tubelz/macaw.svg?branch=master) [![Coverage Status](https://codecov.io/gh/tubelz/macaw/branch/master/graph/badge.svg)](https://codecov.io/gh/tubelz/macaw)
+# Macaw [![Build Status](https://travis-ci.org/tubelz/macaw.svg?branch=master)](https://travis-ci.org/tubelz/macaw.svg?branch=master) [![Coverage Status](https://codecov.io/gh/tubelz/macaw/branch/master/graph/badge.svg)](https://codecov.io/gh/tubelz/macaw) [![GoDoc](https://godoc.org/github.com/tubelz/macaw?status.svg)](https://godoc.org/github.com/tubelz/macaw) [![Go Report Card](https://goreportcard.com/badge/github.com/tubelz/macaw)](https://goreportcard.com/report/github.com/tubelz/macaw)
 
 Macaw is a 2D Game Engine using SDL2.
 Macaw is written in Go with the [ECS architecture pattern](https://en.wikipedia.org/wiki/Entity%E2%80%93component%E2%80%93system).
