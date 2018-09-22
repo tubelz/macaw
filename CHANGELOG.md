@@ -4,9 +4,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v0.7]
+### Added
+- Function to modify screen mode (fullscreen)
+- Variables to modify *Window size and title
+- Tests to cover older functions
+- More information to README.md to facilitate status and access to some of Macaw data (documentation/lint report)
+- Other quit functions in the Macaw.Quit()
+- Debug flag so we can silent the console messages from Macaw
 
-## [0.0.6] - 2018-08-10
+### Changed
+- Code coverage now uses codecov instead of coverall
+- travis.yml now uses test.sh script to execute Macaw packages
+- PlaySound() doesn't return chunk anymore
+- Changed the way we iterate over the entities
+- Render component / system
+- Spritesheet and Text files to comply with the new render component / system
+
+### Fixed
+- Some minor problems (mispell and lack of comments)
+
+## [v0.6] - 2018-08-10
+SHA: 099155a4df8d73b8aab27bbb4d9a01d90cee5a72
 ### Added
 - This changelog :)
 - [Wiki page](https://github.com/tubelz/macaw/wiki)
@@ -27,7 +46,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Unused variable from gameloop
 
-## [0.0.5] - 2018-05-13
+## [v0.5] - 2018-05-13
+SHA: 30f1d89ac62500f36d2d3ffbf99e2c5fcd5da365
 ### Added
 - Multiple collisions areas per entity
 - Grid component
@@ -45,7 +65,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Log from border collision
 
 
-## [0.4] - 2018-04-01
+## [v0.4] - 2018-04-01
+SHA: 847761395efe5a93ab62f261e6e08519a553268c
 ### Added
 - Entity manager
 - More options for image rendering
@@ -65,7 +86,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Setup and Teardown functions in the test for logging purposes
 - Skipped frames from gameloop
 
-## [0.3] - 2018-03-22
+## [v0.3] - 2018-03-22
+SHA: e60e13fcd7ac903350343d12bb2a51ad537c7b1d
 ### Added
 - Mouse event
 - Initialization for scenes
@@ -74,7 +96,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Camera to render
 - Travis.ci 
 
-## [0.2] - 2018-03-08
+## [v0.2] - 2018-03-08 
+SHA: 3c1bb6ce284c53652644a84cd624d73e6cfb010c 
 ### Added
 - Mouse event
 - Scene and SceneManager
@@ -85,7 +108,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Initialization
 - Some events within physics and collision system
 
-## 0.1 - 2018-03-04
+## [v0.1] - 2018-03-04
+SHA: a7b2ea6c73522ec5055c9b5a1a90cef534552a27 
 ### Added
 - Initialized project - https://github.com/tubelz/macaw/commit/a7b2ea6c73522ec5055c9b5a1a90cef534552a27
 
