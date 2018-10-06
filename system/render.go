@@ -158,10 +158,28 @@ func (r *RenderSystem) Update() {
 		} else {
 			x, y = r.OffsetPosition(position.Pos.X, position.Pos.Y)
 		}
-		dst := &sdl.Rect{x, y, render.Crop.W, render.Crop.H}
+
+		dst := createDestPos(*position, *render, x, y)
 		r.Renderer.CopyEx(render.Texture, &crop, dst, render.Angle, render.Center, render.Flip)
 	}
 	r.Renderer.Present()
+}
+
+// createDestPos creates the rect destination using the Z position, thus with perspective.
+func createDestPos(position entity.PositionComponent, render entity.RenderComponent, x, y int32) *sdl.Rect {
+	var dst *sdl.Rect
+	if position.Z != 0 {
+		z := position.Z + 1
+		dst = &sdl.Rect{
+			int32(float32(x) / z),
+			int32(float32(y) / z),
+			int32(float32(render.Crop.W) / z),
+			int32(float32(render.Crop.H) / z),
+		}
+	} else {
+		dst = &sdl.Rect{x, y, render.Crop.W, render.Crop.H}
+	}
+	return dst
 }
 
 // generateTextureFromFont generate Texture from Font component

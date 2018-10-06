@@ -44,12 +44,17 @@ func (c *CollisionSystem) Update() {
 			component = obj2.GetComponent(&entity.CollisionComponent{})
 			collision2 := component.(*entity.CollisionComponent)
 
-			if c.checkCollisionBetweenAreas(position, collision, position2, collision2) {
+			if isInSameZPlane(*position, *position2) && c.checkCollisionBetweenAreas(position, collision, position2, collision2) {
 				c.NotifyEvent(&CollisionEvent{Ent: obj, With: obj2})
 				c.NotifyEvent(&CollisionEvent{Ent: obj2, With: obj})
 			}
 		}
 	}
+}
+
+// isInSameZPlane checks if both objects are in the same Z plane
+func isInSameZPlane(pos1 entity.PositionComponent, pos2 entity.PositionComponent) bool {
+	return pos1.Z == pos2.Z
 }
 
 func (c *CollisionSystem) checkCollisionBetweenAreas(pos1 *entity.PositionComponent,

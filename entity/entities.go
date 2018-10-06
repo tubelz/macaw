@@ -191,6 +191,7 @@ func (m *Manager) IterFilter(components []Component, start int) func() (*Entity,
 //PositionComponent is responsible for the position of the entity
 type PositionComponent struct {
 	Pos *sdl.Point
+	Z   float32
 }
 
 // PhysicsComponent is responsible for some of the physics
