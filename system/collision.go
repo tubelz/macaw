@@ -1,11 +1,12 @@
 package system
 
 import (
+	"log"
+
 	"github.com/tubelz/macaw/cmd"
 	"github.com/tubelz/macaw/entity"
 	"github.com/tubelz/macaw/math"
 	"github.com/veandco/go-sdl2/sdl"
-	"log"
 )
 
 // CollisionSystem is the system responsible to handle collisions
@@ -63,9 +64,9 @@ func (c *CollisionSystem) checkCollisionBetweenAreas(pos1 *entity.PositionCompon
 	col2 *entity.CollisionComponent) bool {
 	var rect1, rect2 *sdl.Rect
 	for _, area1 := range col1.CollisionAreas {
-		rect1 = &sdl.Rect{pos1.Pos.X + area1.X, pos1.Pos.Y + area1.Y, area1.W, area1.H}
+		rect1 = &sdl.Rect{X: pos1.Pos.X + area1.X, Y: pos1.Pos.Y + area1.Y, W: area1.W, H: area1.H}
 		for _, area2 := range col2.CollisionAreas {
-			rect2 = &sdl.Rect{pos2.Pos.X + area2.X, pos2.Pos.Y + area2.Y, area2.W, area2.H}
+			rect2 = &sdl.Rect{X: pos2.Pos.X + area2.X, Y: pos2.Pos.Y + area2.Y, W: area2.W, H: area2.H}
 			if rect1.HasIntersection(rect2) {
 				return true
 			}
@@ -138,7 +139,7 @@ func InvertVel(event Event) {
 	physics := component.(*entity.PhysicsComponent)
 
 	intersectRect := intersection(collision.Ent, collision.With)
-	displacementPos := &sdl.Point{intersectRect.W, intersectRect.H}
+	displacementPos := &sdl.Point{X: intersectRect.W, Y: intersectRect.H}
 
 	// TODO: Clean this a little bit...
 	if displacementPos.X < displacementPos.Y {
@@ -187,9 +188,9 @@ func intersection(obj1, obj2 *entity.Entity) sdl.Rect {
 	collision2 := obj2.GetComponent(colComp).(*entity.CollisionComponent)
 
 	for _, area1 := range collision1.CollisionAreas {
-		rect1 := &sdl.Rect{position1.Pos.X + area1.X, position1.Pos.Y + area1.Y, area1.W, area1.H}
+		rect1 := &sdl.Rect{X: position1.Pos.X + area1.X, Y: position1.Pos.Y + area1.Y, W: area1.W, H: area1.H}
 		for _, area2 := range collision2.CollisionAreas {
-			rect2 := &sdl.Rect{position2.Pos.X + area2.X, position2.Pos.Y + area2.Y, area2.W, area2.H}
+			rect2 := &sdl.Rect{X: position2.Pos.X + area2.X, Y: position2.Pos.Y + area2.Y, W: area2.W, H: area2.H}
 			if displacement, ok := rect1.Intersect(rect2); ok {
 				return displacement
 			}

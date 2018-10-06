@@ -25,7 +25,7 @@ func (r *RenderSystem) Init() {
 		logFatalf("Renderer could not be created! SDL Error: %s\n", sdl.GetError())
 	} else {
 		//Initialize renderer color
-		r.BgColor = sdl.Color{0xFF, 0xFF, 0xFF, 0xFF}
+		r.BgColor = sdl.Color{R: 0xFF, G: 0xFF, B: 0xFF, A: 0xFF}
 		r.Renderer.SetDrawColor(0xFF, 0xFF, 0xFF, 0xFF)
 	}
 }
@@ -72,8 +72,8 @@ func (r *RenderSystem) isRenderable(pos *sdl.Point, size sdl.Rect) bool {
 		camera := c.(*entity.CameraComponent)
 
 		// check if there is an intersection
-		objRect := &sdl.Rect{pos.X, pos.Y, size.W, size.H}
-		cameraRect := sdl.Rect{position.Pos.X, position.Pos.Y, camera.ViewportSize.X, camera.ViewportSize.Y}
+		objRect := &sdl.Rect{X: pos.X, Y: pos.Y, W: size.W, H: size.H}
+		cameraRect := sdl.Rect{X: position.Pos.X, Y: position.Pos.Y, W: camera.ViewportSize.X, H: camera.ViewportSize.Y}
 		return cameraRect.HasIntersection(objRect)
 	}
 	return false
@@ -100,7 +100,6 @@ func (r *RenderSystem) Update() {
 		// Position component
 		component = obj.GetComponent(&entity.PositionComponent{})
 		position := component.(*entity.PositionComponent)
-
 		// Do interpolation if necessary - requires physics component (physics)
 		if component = obj.GetComponent(&entity.PhysicsComponent{}); component != nil {
 			physics := component.(*entity.PhysicsComponent)
@@ -108,7 +107,7 @@ func (r *RenderSystem) Update() {
 				position.Pos.X = 0
 				position.Pos.Y = 0
 			} else {
-				pos1 := &sdl.Point{int32(physics.FuturePos.X), int32(physics.FuturePos.Y)}
+				pos1 := &sdl.Point{X: int32(physics.FuturePos.X), Y: int32(physics.FuturePos.Y)}
 				position.Pos = lerp(position.Pos, pos1, alpha)
 			}
 		}
@@ -171,13 +170,13 @@ func createDestPos(position entity.PositionComponent, render entity.RenderCompon
 	if position.Z != 0 {
 		z := position.Z + 1
 		dst = &sdl.Rect{
-			int32(float32(x) / z),
-			int32(float32(y) / z),
-			int32(float32(render.Crop.W) / z),
-			int32(float32(render.Crop.H) / z),
+			X: int32(float32(x) / z),
+			Y: int32(float32(y) / z),
+			W: int32(float32(render.Crop.W) / z),
+			H: int32(float32(render.Crop.H) / z),
 		}
 	} else {
-		dst = &sdl.Rect{x, y, render.Crop.W, render.Crop.H}
+		dst = &sdl.Rect{X: x, Y: y, W: render.Crop.W, H: render.Crop.H}
 	}
 	return dst
 }
@@ -190,7 +189,7 @@ func (r *RenderSystem) generateTextureFromFont(render *entity.RenderComponent, f
 	var err error
 	// Get color. If color is not set, make it black
 	if font.Color == nil {
-		color = sdl.Color{0, 0, 0, 255}
+		color = sdl.Color{R: 0, G: 0, B: 0, A: 255}
 	} else {
 		color = *font.Color
 	}
@@ -205,7 +204,7 @@ func (r *RenderSystem) generateTextureFromFont(render *entity.RenderComponent, f
 		logFatalf("Unable to create texture from %s! SDL Error: %s\n", font.Text, sdl.GetError())
 	}
 	render.Texture = newTexture
-	render.Crop = &sdl.Rect{0, 0, solid.W, solid.H}
+	render.Crop = &sdl.Rect{X: 0, Y: 0, W: solid.W, H: solid.H}
 }
 
 // drawGeometry draws on the renderer the geometry. We don't use texture, because it's faster to draw directly using the renderer
@@ -221,7 +220,7 @@ func (r *RenderSystem) drawGeometry(geometryEntity *entity.Entity, pos *sdl.Poin
 		// Offset position according to camera
 		x, y := r.OffsetPosition(pos.X, pos.Y)
 		// Result of rectangle to draw
-		rect := &sdl.Rect{x, y, w, h}
+		rect := &sdl.Rect{X: x, Y: y, W: w, H: h}
 		// check if it is necessary to render
 		if !r.isRenderable(pos, *rect) {
 			return
@@ -241,7 +240,7 @@ func (r *RenderSystem) drawGeometry(geometryEntity *entity.Entity, pos *sdl.Poin
 func lerp(pos0, pos1 *sdl.Point, alpha float32) *sdl.Point {
 	x := math.Round(float32(pos1.X)*alpha + float32(pos0.X)*(1.0-alpha))
 	y := math.Round(float32(pos1.Y)*alpha + float32(pos0.Y)*(1.0-alpha))
-	return &sdl.Point{x, y}
+	return &sdl.Point{X: x, Y: y}
 }
 
 // nextAnimation returns the crop for the next animation
@@ -263,7 +262,7 @@ func nextAnimation(now uint32, anim *entity.AnimationComponent, currentRect *sdl
 	yMultiplier := anim.Current / anim.RowLength
 	x := int32(xMultiplier)*currentRect.W + anim.InitialPos.X
 	y := int32(yMultiplier)*currentRect.H + anim.InitialPos.Y
-	return &sdl.Rect{x, y, currentRect.W, currentRect.H}
+	return &sdl.Rect{X: x, Y: y, W: currentRect.W, H: currentRect.H}
 }
 
 // drawGrid is used to draw a grid to help debugging
@@ -282,7 +281,7 @@ func (r *RenderSystem) drawGrid(grid *entity.GridComponent) {
 	yIterations := area.Y / grid.Size.Y
 	for i := int32(0); i < xIterations; i++ {
 		for j := int32(0); j < yIterations; j++ {
-			rect := &sdl.Rect{i * grid.Size.X, j * grid.Size.Y, grid.Size.X, grid.Size.Y}
+			rect := &sdl.Rect{X: i * grid.Size.X, Y: j * grid.Size.Y, W: grid.Size.X, H: grid.Size.Y}
 			render.DrawRect(rect)
 		}
 	}

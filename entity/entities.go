@@ -3,10 +3,11 @@
 package entity
 
 import (
+	"reflect"
+
 	"github.com/tubelz/macaw/math"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
-	"reflect"
 )
 
 // Component is the abstract type for each component
