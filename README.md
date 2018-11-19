@@ -31,6 +31,16 @@ That example covers many functionalities such as:
 
 A more complex (and fun) example can be found in https://github.com/tubelz/crazybird !
 
+## Building with Docker
+
+You can check the [crazybird](https://github.com/tubelz/crazybird) example to see how games can be built with docker. 
+
+A simple example, though, involves three steps:
+
+1. Pulling the [docker image](https://hub.docker.com/r/rennomarcus/macaw/) (`docker pull rennomarcus/macaw:latest`)
+2. Running in interactive mode (`docker run -it rennomarcus/macaw:latest`)
+3. Build the application with a simple command `go build .`. Now you have a game built without installing any depency (other than docker)
+
 ## Discussion (issues/suggestions)
 
 If you have questions, suggestions, or just want to chat about our Game Engine you can go to **##macaw** at [freenode.net](https://webchat.freenode.net?channels=%23%23macaw).
