@@ -43,7 +43,8 @@ A simple example, though, involves three steps:
 
 ## Discussion (issues/suggestions)
 
-If you have questions, suggestions, or just want to chat about our Game Engine you can go to **##macaw** at [freenode.net](https://webchat.freenode.net?channels=%23%23macaw).
+If you have questions, suggestions, or just want to chat about our Game Engine you can go to use the Discord app and join our server: https://discord.gg/SXQYsdK
+
 If there is a bug you can open an issue here.
 Your input is fundamental for the project's success. :)
 
